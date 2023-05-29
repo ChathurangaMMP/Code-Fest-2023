@@ -1,21 +1,26 @@
-
 from deep_translator import GoogleTranslator
-import openai
-openai.api_key = "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"
-
+from google.cloud import translate_v2 as translate
 
 sinhala_text = 'අනූශට කියන්න එයාගේ උපාධිය ගැන මම සතුටු වෙනවා කියලා. මැයි 29 වෙනිදා රාත්‍රියේ කුරුඳු හෝටලයේ සාදයකට ඔහුට ආරාධනා කරන්න. ඔහුට මේ සඳහා විද්‍යුත් තැපෑලක් එවන්න.'
-english_text = 'Tell meththani that I happy about his graduation. Invite him party on 29th May at the cinnamon hotel at night. send an email for this to him.'
+english_text = 'Tell anusha that I happy about his graduation. Invite him party on 29th May at the cinnamon hotel at night. send an email for this to him.'
 tamil_text = 'அவருடைய பட்டப்படிப்பைப் பற்றி நான் மகிழ்ச்சியடைகிறேன் என்று அனுஷாவிடம் சொல்லுங்கள். மே 29 அன்று இரவு இலவங்கப்பட்டை ஹோட்டலில் ஒரு விருந்துக்கு அவரை அழைக்கவும். இதற்காக அவருக்கு மின்னஞ்சல் அனுப்புங்கள்.'
 
-source_language = 'en'
-target_language = 'si'
-text = 'happy coding'
 
-translator = GoogleTranslator(source=source_language, target=target_language)
-translated_text = translator.translate(text=english_text)
+translate_client = translate.Client()
+result = translate_client.translate(english_text, target_language='si')
+print(result['translatedText'])
 
-print(translated_text)
+
+#  deep_translator
+
+# source_language = 'en'
+# target_language = 'si'
+# text = 'happy coding'
+
+# translator = GoogleTranslator(source=source_language, target=target_language)
+# translated_text = translator.translate(text=english_text)
+
+# print(translated_text)
 
 
 '''
