@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gmail Compose</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .compose-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f2f2f2;
+        }
+
+        .compose-header {
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .compose-header input[type="email"],
+        .compose-header input[type="text"],
+        .compose-header input[type="password"],
+        .compose-header input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .compose-body textarea {
+            width: 100%;
+            height: 300px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .compose-footer {
+            text-align: right;
+        }
+
+        .compose-footer button {
+            padding: 10px 20px;
+            background-color: #4285f4;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="compose-container">
+        <div class="compose-header">
+            <input type="email" placeholder="To">
+            <input type="text" placeholder="Subject">
+            <input type="file" multiple>
+        </div>
+        <div class="compose-body">
+            <textarea placeholder="Compose your email"></textarea>
+        </div>
+        <div class="compose-footer">
+            <button>Send</button>
+        </div>
+    </div>
+</body>
+</html>
