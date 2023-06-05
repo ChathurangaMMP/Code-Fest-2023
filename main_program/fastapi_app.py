@@ -15,7 +15,6 @@ class UIRequest(BaseModel):
     sender: str
     message: str
     language: str
-    is_button: bool
     button: str
 
 
@@ -59,13 +58,12 @@ async def process_chat_request(request: UIRequest):
     sender_id = request.sender
     message = request.message
     language = request.language  # default language is English.
-    is_button = request.is_button
     button = request.button
 
-    if is_button:
-        if button == "email_drafting":
-            use_case_cache[sender_id] = "email_drafting"
-            return {"sender_id": sender_id, "response": ""}
+    # if is_button:
+    #     if button == "email_drafting":
+    #         use_case_cache[sender_id] = "email_drafting"
+    #         return {"sender_id": sender_id, "response": ""}
 
     if language != "":
         language_cache[sender_id] = language
