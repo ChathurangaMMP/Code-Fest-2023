@@ -15,6 +15,8 @@ class UIRequest(BaseModel):
     sender: str
     message: str
     language: str
+    is_button: bool
+    button: str
 
 
 logger = logging.getLogger(__name__)
@@ -42,27 +44,83 @@ app.add_middleware(
 
 openai_gpt_api_key = config["OpenAI"]["gpt_api_key"]
 
+language_cache = {}
+use_case_cache = {}
+email_drafting_cache = {}
+email_parameters_cache = {}
+
+FIRST_STATE_ID = 1
+SECOND_STATE_ID = 2
+THIRD_STATE_ID = 3
+
 
 @app.post("/chat")
 async def process_chat_request(request: UIRequest):
     sender_id = request.sender
     message = request.message
-    language = request.language
+    language = request.language  # default language is English.
+    is_button = request.is_button
+    button = request.button
 
-    if language == "English":
-        message_text = message
-    elif language == "Sinhala":
-        message_text = sinhala_to_english_translator(message)
-    elif language == "Tamil":
-        message_text = tamil_to_english_translator(message)
+    if is_button:
+        if button == "email_drafting":
+            use_case_cache[sender_id] = "email_drafting"
+            return {"sender_id": sender_id, "response": ""}
 
+    if language != "":
+        language_cache[sender_id] = language
+
+    if message != "" and email_parameters_cache[sender_id]["recipient_name"] != "":
+        message_text = message_translator(message, language)
     logger.info(f'{sender_id}|{language}|{message_text}')
 
-    email_parameters = get_email_parameter_gpt_response(
-        sender_id, message_text)
-    email_parameters["overview"] = message_text
-    email_content = get_email_body_gpt_response(sender_id, email_parameters)
+    if sender_id in email_drafting_cache and email_drafting_cache[sender_id] == FIRST_STATE_ID:
+        pass
 
+    if use_case_cache[sender_id] == "email_drafting":
+        if sender_id not in email_drafting_cache:
+            email_parameters = get_email_parameter_gpt_response(
+                sender_id, message_text)
+            email_parameters["overview"] = message_text
+            email_drafting_cache[sender_id] = FIRST_STATE_ID
+            email_parameters_cache[sender_id] = email_parameters
+
+            if check_email_drafting_missing_featues(sender_id):
+                response_text = get_email_drafting_missing_feature_response(
+                    sender_id)
+                return {"sender_id": sender_id, "response": response_text}
+
+        email_content = get_email_body_gpt_response(
+            sender_id, email_parameters)
+
+        content_translator(language, email_content)
+
+        driver = set_up_chrome_driver()
+        send_email(driver, email_content["recipient_email"],
+                   email_content["subject"], email_content["email_body"])
+
+
+def get_email_drafting_missing_feature_response(sender_id):
+    email_parameters_json = email_parameters_cache[sender_id]
+    if email_parameters_json["recipient_email"] == "":
+        response_text = "Hey, it looks like the recipient's email is missing. \
+            Can you provide that information?"
+
+    elif email_parameters_json["recipient_name"] == "":
+        response_text = "Hey, it looks like the recipient's name is missing. \
+            Can you provide that information?"
+
+    return response_text
+
+
+def check_email_drafting_missing_featues(sender_id):
+    email_parameters_json = email_parameters_cache[sender_id]
+    if "" in email_parameters_json.values():
+        return True
+    return False
+
+
+def content_translator(language, email_content):
     if language == "Sinhala":
         email_content["subject"] = english_to_sinhala_translator(
             email_content["subject"])
@@ -75,8 +133,15 @@ async def process_chat_request(request: UIRequest):
         email_content["email_body"] = english_to_tamil_translator(
             email_content["email_body"])
 
-    send_email(email_content["sender_name"], email_content["recipient_email"],
-               email_content["subject"], email_content["email_body"])
+
+def message_translator(message, language):
+    if language == "English":
+        message_text = message
+    elif language == "Sinhala":
+        message_text = sinhala_to_english_translator(message)
+    elif language == "Tamil":
+        message_text = tamil_to_english_translator(message)
+    return message_text
 
 
 def send_gpt_request(sender_id, prompt_text):
@@ -99,7 +164,8 @@ def get_email_parameter_gpt_response(sender_id, message_text):
     prompt_text = "Extract the following list of features from the given text \
         and return the results as a JSON. The subject feature needs to be generated \
             according to the purpose of the email.\n\nlist of features=\
-                [recipient_name, recipient_email, subject, sender_name]\
+                [recipient_name, recipient_email, subject]. If a feature is missing, \
+                    add "" as the value to the JSON.\
                     \n\nRequest:" + message_text + "\nJSON:"
 
     response = send_gpt_request(sender_id, prompt_text)
@@ -114,7 +180,7 @@ def get_email_parameter_gpt_response(sender_id, message_text):
 def get_email_body_gpt_response(sender_id, parameter_json):
     prompt_text = "Generate an email body content according to the following details. \
         Use followings as the keys in JSON response. Keys= \
-        [recipient_name, recipient_email, subject, sender_name, email_body]\
+        [recipient_name, recipient_email, subject, email_body]\
                     \n\nRequest:" + str(parameter_json) + "\nJSON:"
 
     response = send_gpt_request(sender_id, prompt_text)

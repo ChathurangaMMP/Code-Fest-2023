@@ -12,19 +12,22 @@ import time
 
 # Set up Chrome driver
 
-options = Options()
-options.add_argument('--start-maximized')  # Maximize the browser window
-# Replace with the actual remote debugging URL
-options.add_experimental_option('debuggerAddress', 'localhost:9222')
+
+def set_up_chrome_driver():
+    options = Options()
+    options.add_argument('--start-maximized')  # Maximize the browser window
+    # Replace with the actual remote debugging URL
+    options.add_experimental_option('debuggerAddress', 'localhost:9222')
+
+    # Replace with the actual path to the Chrome profile directory
+    # options.add_argument('--user-data-dir=/home/prasad/git-projects/codefest/chrome-profile')
+    driver = webdriver.Chrome(service=Service(
+        ChromeDriverManager().install()), options=options)
+
+    return driver
 
 
-# Replace with the actual path to the Chrome profile directory
-# options.add_argument('--user-data-dir=/home/prasad/git-projects/codefest/chrome-profile')
-driver = webdriver.Chrome(service=Service(
-    ChromeDriverManager().install()), options=options)
-
-
-def send_email(sender, recipients, subject, message):
+def send_email(driver, recipients, subject, message):
     # Get the list of tab URLs
     tab_urls = driver.window_handles
 
@@ -43,6 +46,7 @@ def send_email(sender, recipients, subject, message):
         print("Gmail window is open")
     else:
         print("Gmail window is not open")
+        driver.get("https://mail.google.com/mail")
 
     # Perform actions on the Gmail tab, e.g., click the compose button
     compose_button = driver.find_element(By.XPATH, '//div[text()="Compose"]')
