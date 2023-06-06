@@ -60,23 +60,37 @@ async def process_chat_request(request: UIRequest):
     language = request.language  # default language is English.
     button = request.button
 
-    # if is_button:
-    #     if button == "email_drafting":
-    #         use_case_cache[sender_id] = "email_drafting"
-    #         return {"sender_id": sender_id, "response": ""}
-
     if language != "":
         language_cache[sender_id] = language
+    else:
+        language_cache[sender_id] = "English"
 
-    if message != "" and email_parameters_cache[sender_id]["recipient_name"] != "":
-        message_text = message_translator(message, language)
+    message_text = message_translator(message, language)
     logger.info(f'{sender_id}|{language}|{message_text}')
 
-    if sender_id in email_drafting_cache and email_drafting_cache[sender_id] == FIRST_STATE_ID:
-        pass
+    if button == "email_drafting":
+        if sender_id in email_drafting_cache:
+            if email_drafting_cache[sender_id] == FIRST_STATE_ID:
+                missing_feature = get_email_drafting_missing_feature(sender_id)
+                email_parameters_cache[sender_id][missing_feature] = message_text
 
-    if use_case_cache[sender_id] == "email_drafting":
-        if sender_id not in email_drafting_cache:
+                if check_email_drafting_missing_featues(sender_id):
+                    response_text = get_email_drafting_missing_feature_response(
+                        sender_id)
+                    return {"sender_id": sender_id, "response": response_text}
+                else:
+                    email_drafting_cache[sender_id] = SECOND_STATE_ID
+
+            if email_drafting_cache[sender_id] == SECOND_STATE_ID:
+                email_content = get_email_body_gpt_response(
+                    sender_id, email_parameters)
+
+                content_translator(language, email_content)
+                email_drafting_cache[sender_id] = THIRD_STATE_ID
+
+                return {"sender_id": sender_id, "response": email_content["email_body"]}
+
+        else:
             email_parameters = get_email_parameter_gpt_response(
                 sender_id, message_text)
             email_parameters["overview"] = message_text
@@ -87,15 +101,48 @@ async def process_chat_request(request: UIRequest):
                 response_text = get_email_drafting_missing_feature_response(
                     sender_id)
                 return {"sender_id": sender_id, "response": response_text}
+            else:
+                email_drafting_cache[sender_id] = SECOND_STATE_ID
 
-        email_content = get_email_body_gpt_response(
-            sender_id, email_parameters)
+            if email_drafting_cache[sender_id] == SECOND_STATE_ID:
+                email_content = get_email_body_gpt_response(
+                    sender_id, email_parameters)
 
-        content_translator(language, email_content)
+                content_translator(language, email_content)
+                email_drafting_cache[sender_id] = THIRD_STATE_ID
 
-        driver = set_up_chrome_driver()
-        send_email(driver, email_content["recipient_email"],
-                   email_content["subject"], email_content["email_body"])
+                return {"sender_id": sender_id, "response": email_content["email_body"]}
+
+
+@app.post("/send_email")
+async def process_send_email_request(request: UIRequest):
+    sender_id = request.sender
+    message = request.message
+    language = request.language  # default language is English.
+    button = request.button
+
+    email_content = email_parameters_cache[sender_id]
+
+    driver = set_up_chrome_driver()
+    send_email(driver, email_content["recipient_email"],
+               email_content["subject"], message)
+
+    clear_email_drafting_caches(sender_id)
+    return {"sender_id": sender_id, "response": "Email is sent successfully."}
+
+
+def clear_email_drafting_caches(sender_id):
+    del email_drafting_cache[sender_id]
+    del email_parameters_cache[sender_id]
+
+
+def get_email_drafting_missing_feature(sender_id):
+    email_parameters_json = email_parameters_cache[sender_id]
+    if email_parameters_json["recipient_email"] == "":
+        return "recipient_email"
+
+    elif email_parameters_json["recipient_name"] == "":
+        return "recipient_name"
 
 
 def get_email_drafting_missing_feature_response(sender_id):
