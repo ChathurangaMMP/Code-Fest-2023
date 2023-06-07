@@ -1,0 +1,7 @@
+1. Extract the following list of features from the given text and return the results as a JSON. 
+2. The subject feature needs to be generated according to the purpose of the email.
+3. If the subject is related to work, use a professional tone. 
+4. If the subject is related to personal purpose, user a friendly and warm tone.
+5. The request is a JSON object and it has following list of keys = [initial_prompt, follow_up_prompt, follow_up_response].
+6. List of features that needs to be there in the JSON output = [recipient_name, recipient_email, subject]. 
+7. If a feature is missing, add "" as the value to the JSON.

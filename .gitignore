@@ -2,3 +2,5 @@ main_program/__pycache__
 main_program/logs
 main_program/conf
 main_program/conf/application.ini
+chatbots/.rasa/
+slackbot/.env

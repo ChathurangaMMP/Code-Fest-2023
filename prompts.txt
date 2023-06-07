@@ -1,0 +1,25 @@
+Email parameter extraction
+
+1. Extract the following list of features from the given text and return the results as a JSON. 
+2. The subject feature needs to be generated according to the purpose of the email.
+3. If the subject is related to work, use a professional tone. 
+4. If the subject is related to personal purpose, user a friendly and warm tone.
+5. The request is a JSON object and it has following list of keys = [initial_prompt, follow_up_prompt, follow_up_response].
+6. List of features that needs to be there in the JSON output = [recipient_name, recipient_email, subject]. 
+7. If a feature is missing, add "" as the value to the JSON.
+
+Request:
+JSON:
+
+
+Email body generation
+
+1. Generate an email body content according to the following details.
+2. If the email body is related to work, use a professional tone. 
+3. If the email body is related to personal purpose, user a friendly and warm tone.
+4. The request is a JSON object and it has following list of keys = [recipient_name, recipient_email, subject, initial_prompt, follow_up_prompt, follow_up_response].
+5. The "initial_prompt" is the one that user given at the beginning. Then we sent the "follow_up_prompt" to the user and got the "follow_up_response". By using these 3 parameters and the "recipient_name" parameter, generate the email body.
+6. Use followings as the keys in JSON response in the output. Keys= [recipient_name, recipient_email, subject, email_body]
+
+Request:
+JSON:

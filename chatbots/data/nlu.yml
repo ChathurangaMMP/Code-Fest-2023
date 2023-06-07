@@ -1,0 +1,62 @@
+version: "3.1"
+
+nlu:
+- intent: compelling_introduction_email
+  examples: |
+    - introduction email
+    - compelling introduction mail
+    - I want to generate a introduction email
+    - Can you give me an email to make a strong first impression?
+    - Give me a introduction email.
+    - Tell me what you want to generate a compelling introduction email
+    - Could you help me craft a compelling introduction email to make a strong first impression?
+
+
+- intent: thank_you_email
+  examples: |
+    - thank you mail
+    - email to give appreciation
+    - thanking email
+    - Generate an email to say thank you
+    - I want an email to say thank you to my manager
+    - What details need to create a thank you email?
+    - Can you help me with compelling content that truly showcases my appreciation?
+    - I'm looking for content that effectively conveys my appreciation and leaves a lasting impression.
+    - Could you provide me with engaging content that effectively expresses my gratitude?
+    - I need assistance in creating a thoughtful thank-you email. Can you provide me with engaging content that highlights my appreciation?
+
+
+- intent: complaint_resolve_email
+  examples: |
+    - customer complain
+    - email to resolve a complaint
+    - email to address a customer complaint
+    - customer solution giving email
+    - I need a formal email to give solutions for customers
+    - Give me an email draft to send to customers for addressing their complaints
+    - Compose a formal and tactful email to address and resolve a customer complaint
+
+
+- intent: meeting_request_email
+  examples: |
+    - schedule a meeting
+    - request to have a meeting
+    - email for requesting a meeting
+    - Generate an email to request a meeting with clients
+    - I want to get a meeting my Perera. Can you give me an email to request that?
+    - Create a professional and concise email to request a meeting with a potential client
+
+
+- intent: networking_email
+  examples: |
+    - Generate an engaging networking email to expand professional connections.
+
+
+- intent: persuasive_email
+  examples: |
+    - Craft a persuasive email that effectively communicates the benefits of our product/service.
+
+
+- intent: apology_email
+  examples: |
+    - Craft a sincere apology email that acknowledges mistakes and offers a solution. Please provide the following details

@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 import requests
 import json
 import configparser
@@ -43,18 +43,33 @@ app.add_middleware(
 
 openai_gpt_api_key = config["OpenAI"]["gpt_api_key"]
 
+with open(config["Rasa"]["english_intent_response"], "r") as file:
+    english_intent_response = json.load(file)
+
+with open(config["OpenAI"]["email_parameters_prompt_file"], "r") as file:
+    email_parameters_prompt = file.read()
+
+with open(config["OpenAI"]["email_body_prompt_file"], "r") as file:
+    email_body_prompt = file.read()
+
 language_cache = {}
-use_case_cache = {}
 email_drafting_cache = {}
 email_parameters_cache = {}
 
 FIRST_STATE_ID = 1
 SECOND_STATE_ID = 2
 THIRD_STATE_ID = 3
+FOURTH_STATE_ID = 4
+FIFTH_STATE_ID = 5
+
+english_http_nlu_endpoint = config["Rasa"]["english_http_nlu_endpoint"]
 
 
 @app.post("/chat")
-async def process_chat_request(request: UIRequest):
+async def process_chat_request(request: Request):
+    json_data = await request.json()
+    request = UIRequest.parse_obj(json_data)
+
     sender_id = request.sender
     message = request.message
     language = request.language  # default language is English.
@@ -68,9 +83,34 @@ async def process_chat_request(request: UIRequest):
     message_text = message_translator(message, language)
     logger.info(f'{sender_id}|{language}|{message_text}')
 
-    if button == "email_drafting":
-        if sender_id in email_drafting_cache:
+    if button == "Email Drafting":
+        if sender_id not in email_drafting_cache:
+            email_parameters_cache[sender_id] = {
+                "initial_prompt": message_text}
+            intent, response_text = get_intent_response(
+                sender_id, message_text)
+            email_drafting_cache[sender_id] = FIRST_STATE_ID
+            email_parameters_cache[sender_id]["follow_up_prompt"] = response_text
+            print(response_text)
+            return {"sender": sender_id, "response": response_text}
+
+        else:
             if email_drafting_cache[sender_id] == FIRST_STATE_ID:
+                email_parameters_cache[sender_id]["follow_up_response"] = response_text
+                email_parameters = get_email_parameter_gpt_response(
+                    sender_id, email_parameters_cache[sender_id])
+
+                email_parameters_cache[sender_id].update(email_parameters)
+                email_drafting_cache[sender_id] = SECOND_STATE_ID
+
+                if check_email_drafting_missing_featues(sender_id):
+                    response_text = get_email_drafting_missing_feature_response(
+                        sender_id)
+                    return {"sender_id": sender_id, "response": response_text}
+                else:
+                    email_drafting_cache[sender_id] = THIRD_STATE_ID
+
+            if email_drafting_cache[sender_id] == SECOND_STATE_ID:
                 missing_feature = get_email_drafting_missing_feature(sender_id)
                 email_parameters_cache[sender_id][missing_feature] = message_text
 
@@ -79,39 +119,41 @@ async def process_chat_request(request: UIRequest):
                         sender_id)
                     return {"sender_id": sender_id, "response": response_text}
                 else:
-                    email_drafting_cache[sender_id] = SECOND_STATE_ID
+                    email_drafting_cache[sender_id] = THIRD_STATE_ID
 
-            if email_drafting_cache[sender_id] == SECOND_STATE_ID:
+            if email_drafting_cache[sender_id] == THIRD_STATE_ID:
                 email_content = get_email_body_gpt_response(
-                    sender_id, email_parameters)
-
+                    sender_id, email_parameters_cache[sender_id])
                 content_translator(language, email_content)
-                email_drafting_cache[sender_id] = THIRD_STATE_ID
-
+                email_drafting_cache[sender_id] = FOURTH_STATE_ID
                 return {"sender_id": sender_id, "response": email_content["email_body"]}
 
+
+def get_intent_response(sender_id, message_text):
+    data = json.dumps({"text": message_text})
+    response = requests.request(
+        "POST", english_http_nlu_endpoint, headers=headers,
+        data=data)
+
+    intent = "nlu_fallback"
+    if response.status_code == 200:
+        response_dict = response.json()
+        logger.info(
+            f'{sender_id}|RASA_INTENT_RECEIVED|{response.text.strip()}')
+
+        intent_confidence = response_dict["intent"]["confidence"]
+        if intent_confidence > float(config["Rasa"]["intent_confidence"]):
+            intent = response_dict["intent"]["name"]
         else:
-            email_parameters = get_email_parameter_gpt_response(
-                sender_id, message_text)
-            email_parameters["overview"] = message_text
-            email_drafting_cache[sender_id] = FIRST_STATE_ID
-            email_parameters_cache[sender_id] = email_parameters
+            intent = "nlu_fallback"
 
-            if check_email_drafting_missing_featues(sender_id):
-                response_text = get_email_drafting_missing_feature_response(
-                    sender_id)
-                return {"sender_id": sender_id, "response": response_text}
-            else:
-                email_drafting_cache[sender_id] = SECOND_STATE_ID
+        response_text = english_intent_response[intent]
 
-            if email_drafting_cache[sender_id] == SECOND_STATE_ID:
-                email_content = get_email_body_gpt_response(
-                    sender_id, email_parameters)
+    else:
+        response_text = "Oops, We're experiencing some connection \
+            issues right now. \n\t\nCould you please try again?"
 
-                content_translator(language, email_content)
-                email_drafting_cache[sender_id] = THIRD_STATE_ID
-
-                return {"sender_id": sender_id, "response": email_content["email_body"]}
+    return (intent, response_text)
 
 
 @app.post("/send_email")
@@ -206,12 +248,7 @@ def send_gpt_request(sender_id, prompt_text):
 
 
 def get_email_parameter_gpt_response(sender_id, message_text):
-    prompt_text = "Extract the following list of features from the given text \
-        and return the results as a JSON. The subject feature needs to be generated \
-            according to the purpose of the email.\n\nlist of features=\
-                [recipient_name, recipient_email, subject]. If a feature is missing, \
-                    add "" as the value to the JSON.\
-                    \n\nRequest:" + message_text + "\nJSON:"
+    prompt_text = email_parameters_prompt + "\nRequest:" + message_text + "\nJSON:"
 
     response = send_gpt_request(sender_id, prompt_text)
     response_dict = json.loads(json.dumps(response))
@@ -223,14 +260,12 @@ def get_email_parameter_gpt_response(sender_id, message_text):
 
 
 def get_email_body_gpt_response(sender_id, parameter_json):
-    prompt_text = "Generate an email body content according to the following details. \
-        Use followings as the keys in JSON response. Keys= \
-        [recipient_name, recipient_email, subject, email_body]\
-                    \n\nRequest:" + str(parameter_json) + "\nJSON:"
+    prompt_text = email_body_prompt + "\nRequest:" + \
+        str(parameter_json) + "\nJSON:"
 
     response = send_gpt_request(sender_id, prompt_text)
     response_dict = json.loads(json.dumps(response))
-    print(response_dict)
+
     response_text = json.loads(response_dict["choices"][0]["text"])
 
     logger.info(f'{sender_id}|OPENAI_EMAIL_BODY_RESPONSE|{response_dict}')

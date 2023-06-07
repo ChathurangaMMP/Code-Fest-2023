@@ -1,0 +1,10 @@
+version: "3.1"
+
+intents:
+  - compelling_introduction_email
+  - thank_you_email
+  - complaint_resolve_email
+  - meeting_request_email
+  - networking_email
+  - persuasive_email
+  - apology_email
