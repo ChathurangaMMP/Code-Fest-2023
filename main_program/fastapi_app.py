@@ -96,7 +96,7 @@ async def process_chat_request(request: Request):
 
         else:
             if email_drafting_cache[sender_id] == FIRST_STATE_ID:
-                email_parameters_cache[sender_id]["follow_up_response"] = response_text
+                email_parameters_cache[sender_id]["follow_up_response"] = message_text
                 email_parameters = get_email_parameter_gpt_response(
                     sender_id, email_parameters_cache[sender_id])
 
@@ -248,14 +248,14 @@ def send_gpt_request(sender_id, prompt_text):
 
 
 def get_email_parameter_gpt_response(sender_id, message_text):
-    prompt_text = email_parameters_prompt + "\nRequest:" + message_text + "\nJSON:"
+    prompt_text = email_parameters_prompt + \
+        "\nRequest:" + str(message_text) + "\nJSON:"
 
     response = send_gpt_request(sender_id, prompt_text)
     response_dict = json.loads(json.dumps(response))
-    response_text = json.loads(response_dict["choices"][0]["text"])
-
     logger.info(
         f'{sender_id}|OPENAI_EMAIL_PARAMETERS_RESPONSE|{response_dict}')
+    response_text = json.loads(response_dict["choices"][0]["text"])
     return response_text
 
 
@@ -265,8 +265,7 @@ def get_email_body_gpt_response(sender_id, parameter_json):
 
     response = send_gpt_request(sender_id, prompt_text)
     response_dict = json.loads(json.dumps(response))
-
+    logger.info(f'{sender_id}|OPENAI_EMAIL_BODY_RESPONSE|{response_dict}')
     response_text = json.loads(response_dict["choices"][0]["text"])
 
-    logger.info(f'{sender_id}|OPENAI_EMAIL_BODY_RESPONSE|{response_dict}')
     return response_text
