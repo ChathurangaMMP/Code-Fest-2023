@@ -8,8 +8,20 @@ nlu:
     - I want to generate a introduction email
     - Can you give me an email to make a strong first impression?
     - Give me a introduction email.
+    - suggest an email to do an introduction on our new product
+    - Draft me an email to introduce our new project to clients
     - Tell me what you want to generate a compelling introduction email
     - Could you help me craft a compelling introduction email to make a strong first impression?
+    - Could you help me craft a compelling introduction email to make a strong first impression when reaching out to telco industry leaders to showcase our innovative Red Hat services and API-based products?
+    - I need assistance in writing an impactful introduction email to introduce our software company's specialized offerings for the telco sector to the Go-to-Market team. Can you provide some content suggestions?
+    - Can you give me suggestions on writing a captivating introduction email to connect with telecom operators and highlight the value of our Red Hat services and API-based products in streamlining their operations and enhancing customer experience?
+    - I'm looking for guidance in writing an engaging introduction email to introduce our software company's expertise in the telco sector and propose a partnership opportunity with the Go-to-Market team. Any tips or suggestions?
+    - I need help in crafting an introduction email that stands out when reaching out to telco industry influencers to explore collaborative opportunities in promoting our Red Hat services and API-based products. Can you provide some guidance and content suggestions?
+    - Can you assist me in writing an attention-grabbing introduction email to introduce our software company's cutting-edge solutions for telco providers, emphasizing the seamless integration of our Red Hat services and API-based products into their existing infrastructure?
+    - I'm struggling to write a powerful introduction email to connect with the Go-to-Market team of telecom equipment manufacturers, presenting the benefits of our Red Hat services and API-based products as complementary offerings. Any recommendations on how to make a strong impression?
+    - I'm looking for ideas on how to write an effective introduction email to reach out to telco industry analysts and provide them with insights about our software company's success in delivering exceptional Red Hat services and API-based products. Can you provide some pointers and content suggestions?
+    - Could you provide some guidance on writing a compelling introduction email to introduce our software company's telco-specific solutions to potential investors, highlighting the market demand and growth potential of our Red Hat services and API-based products?
+    - I need assistance in drafting an introduction email to connect with telco sector decision-makers and decision-influencers, showcasing our software company's thought leadership and expertise in delivering state-of-the-art Red Hat services and API-based products. Can you help me with content suggestions?
 
 
 - intent: thank_you_email
@@ -23,7 +35,17 @@ nlu:
     - Can you help me with compelling content that truly showcases my appreciation?
     - I'm looking for content that effectively conveys my appreciation and leaves a lasting impression.
     - Could you provide me with engaging content that effectively expresses my gratitude?
-    - I need assistance in creating a thoughtful thank-you email. Can you provide me with engaging content that highlights my appreciation?
+    - I need assistance in creating a thoughtful thank you email. Can you provide me with engaging content that highlights my appreciation?
+    - Can you provide content suggestions for a thoughtful thank-you email to express our gratitude to a key telco client who recently implemented our Red Hat services and API-based products?
+    - I'm looking for engaging content ideas to craft a thank-you email to our dedicated team of engineers who played a crucial role in the successful implementation of our Red Hat services and API-based products for a telco project. Can you assist me with that?
+    - Could you help me create a heartfelt thank-you email to our valued telco partners for their continued support in promoting and adopting our Red Hat services and API-based products?
+    - I need assistance in writing a personalized thank-you email to a telco industry influencer who recently featured our software solutions and API-based products in their blog. Can you provide engaging content suggestions to convey our appreciation?
+    - Can you give me ideas for a thank you email to our telco customers who participated in a successful pilot program of our Red Hat services and API-based products? I want to express our gratitude and highlight the positive outcomes achieved.
+    - I'm looking for content suggestions to create a thank-you email to a telco industry analyst who provided valuable insights and recommendations during a recent briefing session on our Red Hat services and API-based products. Can you help me make it engaging and impactful?
+    - Could you assist me in crafting a thanking email to a telco industry association for recognizing our software company's contributions in delivering innovative Red Hat services and API-based products to the sector?
+    - I need help in writing a thank-you email to our telco sales team for their outstanding efforts in securing a significant contract for our Red Hat services and API-based products. Can you provide compelling content suggestions to acknowledge their achievements?
+    - Can you provide content ideas for a thank-you email to our telco partners who collaborated with us on a joint marketing campaign promoting our Red Hat services and API-based products? I want to express our appreciation for their support.
+    - I'm seeking assistance in creating an email for thanking to our telco customers who provided valuable feedback and suggestions for enhancing our Red Hat services and API-based products. Can you help me draft engaging content that highlights our appreciation for their contributions?
 
 
 - intent: complaint_resolve_email
@@ -32,9 +54,21 @@ nlu:
     - email to resolve a complaint
     - email to address a customer complaint
     - customer solution giving email
+    - complaint resolving email
     - I need a formal email to give solutions for customers
     - Give me an email draft to send to customers for addressing their complaints
     - Compose a formal and tactful email to address and resolve a customer complaint
+    - I need to address a customer compain via an emai. Can you give me some suggestions?
+    - Compose a formal and tactful email to address and resolve a customer complaint regarding a recent service disruption, ensuring to emphasize our commitment to delivering reliable and efficient solutions in the telco sector.
+    - Draft a professional email to address and resolve a customer complaint related to a billing discrepancy, highlighting our dedication to accurate invoicing and providing excellent customer service for our Red Hat services.
+    - Craft an email response to a customer complaint regarding technical issues with our API-based product, assuring them of our prompt attention to the matter and commitment to delivering top-notch solutions in the telco industry.
+    - Write a courteous email to address and resolve a customer complaint about a delayed response from our support team, acknowledging the issue and outlining the steps we are taking to improve our customer service in the software sector.
+    - Compose a diplomatic email to address and resolve a customer complaint about a product defect, assuring them of our commitment to quality assurance and offering a satisfactory solution tailored to their telco business needs.
+    - Draft an email response to a customer complaint regarding a miscommunication during the implementation of our Red Hat services, emphasizing our willingness to rectify the situation and ensure a smooth experience going forward in the software industry.
+    - Craft a professional email to address and resolve a customer complaint about poor API performance, highlighting our technical expertise and commitment to continuous improvement in delivering high-performance solutions for the telco sector.
+    - Write a tactful email to address and resolve a customer complaint regarding difficulties in navigating our API documentation, offering additional guidance and resources to enhance their experience with our product in the software industry.
+    - Compose a courteous email response to a customer complaint about unsatisfactory customer support during the onboarding process for our Red Hat services, expressing our regret and outlining the measures we are implementing to enhance the customer experience in the telco sector.
+    - Draft an empathetic email to address and resolve a customer complaint about a delayed software update, expressing understanding for their frustration and outlining the steps we are taking to expedite the release while ensuring a robust and reliable solution.
 
 
 - intent: meeting_request_email
@@ -42,21 +76,302 @@ nlu:
     - schedule a meeting
     - request to have a meeting
     - email for requesting a meeting
+    - sending request to schedule a meeting
     - Generate an email to request a meeting with clients
-    - I want to get a meeting my Perera. Can you give me an email to request that?
+    - I want to get a meeting with Perera. Can you give me an email to request that?
     - Create a professional and concise email to request a meeting with a potential client
+    - Help me draft a professional email requesting a meeting with a potential client in the telco sector to discuss how our Red Hat services and API-based products can enhance their network infrastructure.
+    - I need assistance in writing a concise email to request a meeting with a key decision-maker at a telco company. We want to showcase our expertise in delivering innovative Red Hat solutions and API-based products.
+    - Could you provide content suggestions for an email seeking a meeting with a potential client in the telco sector? We want to explore opportunities to collaborate and demonstrate the value of our Red Hat services and API-based products.
+    - Can you help me compose an email to schedule a meeting with a leading telco company? Our goal is to present the benefits and features of our Red Hat services and API-based products tailored to their specific needs.
+    - I'm looking for guidance on writing an email to request a meeting with a prospective telco client. We aim to showcase our success stories, industry expertise, and how our Red Hat services and API-based products can drive their business growth.
+    - Assist me in crafting a professional email to secure a meeting with a telco company. We want to highlight our track record in delivering innovative solutions and demonstrate the value of our Red Hat services and API-based products.
+    - Could you provide suggestions on how to write a concise email inviting a potential telco client for a meeting? We aim to discuss how our Red Hat services and API-based products can address their specific challenges and drive operational efficiency.
+    - Help me create an email to request a meeting with a prominent telco company. We want to present the unique features and competitive advantages of our Red Hat services and API-based products, tailored to their industry needs.
+    - I need assistance in drafting an email to schedule a meeting with a target telco client. We aim to discuss how our Red Hat services and API-based products can optimize their operations, enhance customer experience, and drive revenue growth.
+    - Can you provide content suggestions for an email seeking a meeting with a potential telco client? We want to showcase our deep understanding of the industry, highlight our success stories, and present the value proposition of our Red Hat services and API-based products.
 
 
 - intent: networking_email
   examples: |
+    - networking
+    - connecting with other companies
+    - email to ask partnerships
+    - Give me an email to send to professionals to network up
+    - engaging email
+    - email to engage with service providers
+    - email to build up a strong connection
     - Generate an engaging networking email to expand professional connections.
+    - Can you help me draft an engaging networking email to connect with key decision-makers in telecommunications companies, highlighting our expertise in providing Red Hat services and API-based solutions?
+    - I'm looking for content suggestions for an email to reach out to industry influencers in the telco sector, aiming to establish strategic partnerships and expand our professional network. How can I effectively communicate our software company's value?
+    - Could you assist me in writing a compelling networking email to connect with software developers and engineers in telco companies, showcasing our API-based products and their potential to enhance their projects?
+    - I need your expertise in crafting an engaging email to introduce our software company's services and solutions to C-level executives in the telco sector. How can I create a strong networking message that captures their attention?
+    - Can you provide content suggestions for an email to connect with technology enthusiasts and industry leaders in the telco sector, discussing the latest trends and innovations in Red Hat services and API-based products?
+    - I'm seeking assistance in writing a networking email to connect with telco professionals attending industry conferences or events. How can I effectively convey our software company's value proposition and encourage meaningful conversations?
+    - Could you help me draft an email to reach out to telco industry analysts and influencers, seeking their insights and perspectives on our software company's offerings and their market potential?
+    - I need content suggestions for an email to connect with telco service providers, emphasizing the benefits of our Red Hat services and API-based solutions in enhancing their network infrastructure and customer experience.
+    - Can you assist me in crafting a compelling networking email to connect with telco start-ups, offering our software company's expertise and support in their growth journey through our Red Hat services and API-based products?
+    - I'm looking for your expertise in writing an engaging email to connect with potential partners in the telco sector, exploring collaboration opportunities in delivering innovative solutions and driving digital transformation using our software company's offerings.
 
 
 - intent: persuasive_email
   examples: |
+    - persuasive email
+    - email to emphasize
+    - showcasing email
+    - Give me an email to highlight our services
+    - Generate content for a persuasing email
     - Craft a persuasive email that effectively communicates the benefits of our product/service.
+    - Craft a persuasive email highlighting how our Red Hat services can help telco companies optimize their network infrastructure and achieve greater operational efficiency.
+    - Develop a compelling email that showcases the benefits of our API-based products in enabling telco companies to accelerate their digital transformation and deliver innovative services to their customers.
+    - Write an email emphasizing how our Red Hat services can help telco companies reduce costs, streamline their operations, and enhance their service delivery.
+    - Create a persuasive email that highlights the advantages of our API-based products in enabling telco companies to easily integrate with third-party applications and unlock new revenue streams.
+    - Compose an email outlining how our Red Hat services can empower telco companies to modernize their legacy systems, improve scalability, and stay ahead of the competition.
+    - Craft a persuasive email that articulates the value of our API-based products in enabling telco companies to rapidly develop and deploy innovative applications, enhancing their customer experience.
+    - Develop an email showcasing how our Red Hat services can help telco companies ensure high availability, reliability, and security of their critical network infrastructure.
+    - Write an email emphasizing how our API-based products can enable telco companies to leverage data analytics and AI capabilities, driving actionable insights and enhancing business decision-making.
+    - Create a persuasive email that highlights the benefits of our Red Hat services in helping telco companies achieve compliance with industry regulations and standards.
+    - Compose an email outlining how our API-based products can enable telco companies to create scalable and flexible solutions, facilitating seamless integration with their existing systems and processes.
 
 
 - intent: apology_email
   examples: |
+    - email to ask apology
+    - apologing email
+    - apology email
+    - email to say sorry for our mistakes
+    - I need to acknowledge my apology via an email
+    - I want to apologize from the manager. Can you help me to generate an email for that?
     - Craft a sincere apology email that acknowledges mistakes and offers a solution. Please provide the following details
+    - Can you help me craft a sincere apology email to our valued telco client, acknowledging a technical issue with our API-based product and offering a solution to resolve their concerns?
+    - I need assistance in writing an apology email to a key customer in the telco sector, addressing a mistake made during the implementation of our Red Hat services and outlining the steps we are taking to rectify the situation.
+    - Could you provide some content suggestions for an apology email to a telco partner, recognizing an error in our software and presenting a plan to mitigate any negative impact on their operations?
+    - I'm looking for guidance on writing a sincere apology email to a telco customer, taking responsibility for a service outage caused by our software and outlining the measures we are implementing to prevent future occurrences.
+    - Can you help me draft an apology email to a telco client, acknowledging a delay in delivering our API-based product and offering compensation along with a detailed timeline for resolution?
+    - I need assistance in crafting an apology email to a telco industry influencer, expressing regret for a miscommunication regarding our Red Hat services and assuring them of our commitment to clear and effective communication going forward.
+    - Could you provide some content suggestions for an apology email to a telco partner, acknowledging a billing error related to our API-based product and outlining the steps we are taking to rectify the situation and prevent future discrepancies?
+    - I'm looking for guidance on writing a sincere apology via an email to a telco customer, addressing a quality issue with our software and presenting a comprehensive plan to enhance the product's performance and reliability.
+    - Can you help me draft an email to a telco client, apologizing for any inconvenience caused by a recent system upgrade related to our Red Hat services and assuring them of our commitment to their satisfaction?
+    - I need assistance in crafting an apology email to a telco industry association, acknowledging any concerns raised by their members regarding our API-based product and offering our full cooperation in addressing their issues and providing necessary support.
+
+
+- intent: create_project_proposal
+  examples: |
+    - proposal
+    - project proposal
+    - create a project proposal
+    - proposal drafting
+    - Give me content for my project proposal
+    - Generate sections for the proposal of marketing project
+    - I want to create a project proposal
+    - I need assistance in crafting a proposal to implement our Red Hat services and API-based products for a leading telecommunications provider. Can you provide content suggestions to highlight the benefits and address their specific needs?
+    - Could you help me create a comprehensive project proposal that outlines the integration of our software solutions into the existing telco infrastructure, emphasizing the scalability and efficiency gains for the client?
+    - I'm looking for guidance in writing a compelling project proposal to offer our Red Hat services and API-based products to multiple telecommunications companies in a region. Can you provide insights on market trends and key selling points?
+    - Can you assist me in crafting a project proposal that showcases our software company's expertise in the telco sector and highlights how our Red Hat services and API-based products can drive revenue growth and operational efficiency for potential clients?
+    - I need help in creating a project proposal that positions our software solutions as the ideal choice for telco companies seeking to modernize their infrastructure and enhance their service offerings. How can we effectively communicate our unique value proposition?
+    - Could you provide content suggestions for a proposal that focuses on the seamless integration of our Red Hat services and API-based products with the client's existing systems, ensuring minimal disruption and maximum ROI?
+    - I'm struggling to create a project proposal that effectively communicates the advantages of our software solutions to telco companies. Can you provide insights on industry challenges and how our offerings address them?
+    - Can you assist me in writing a proposal that highlights our software company's successful track record in the telco sector, showcasing case studies and testimonials to build credibility and trust with potential clients?
+    - I need guidance on crafting a project proposal that demonstrates our software company's commitment to innovation in the telco sector, emphasizing how our Red Hat services and API-based products can future-proof the client's business.
+    - Could you provide content suggestions for a project proposal that outlines the implementation timeline, deliverables, and pricing options for our Red Hat services and API-based products, tailored specifically for telco companies?
+
+
+- intent: create_bussiness_report
+  examples: |
+    - report 
+    - business report
+    - report writing
+    - creating a business report
+    - Give me content for a report that showcase our business.
+    - I need to draft a report for our services
+    - Generate a comprehensive business report tailored to my specific requirements
+    - Can you provide content suggestions to help me generate a comprehensive report on the current state of the telco industry and the opportunities it presents for our software company?
+    - I need assistance in creating a detailed business report that highlights the value proposition of our Red Hat services and API-based products for telco operators. Can you suggest key points to include?
+    - Could you help me craft a report that analyzes the market demand for API-based products in the telco sector and presents a strategic roadmap for our software company's growth?
+    - I'm looking for content suggestions to create a business report that showcases successful case studies of our Red Hat services and API-based products in the telco industry. Can you provide examples and insights?
+    - Can you assist me in generating a business report that outlines the competitive landscape in the telco sector and identifies unique selling points for our software company's offerings?
+    - I need guidance in creating a report that demonstrates the ROI potential of our Red Hat services and API-based products for telco operators. What data and metrics should be included?
+    - Could you provide content suggestions for a business report that explores emerging trends and technologies in the telco sector, and how our software company is positioned to capitalize on them?
+    - I'm looking for help in crafting a business report that highlights the integration capabilities of our API-based products with telco infrastructure, emphasizing the value of seamless connectivity.
+    - Can you assist me in generating a report that presents a comparative analysis of our Red Hat services and API-based products against competitors in the telco sector? What factors should be considered?
+    - I need content suggestions for a business report that outlines the market entry strategy for our software company's Red Hat services and API-based products in the telco sector. What key insights and recommendations should be included?
+
+
+- intent: create_presentation
+  examples: |
+    - presentation
+    - presentation drafting
+    - generating an attractive presentation
+    - I need to create a great visual impact through a presentation
+    - Assist me in creating an impactful presentation that captivates my audience.
+    - Assist me in creating an impactful presentation that showcases our Red Hat services and API-based products to potential telco clients.
+    - I need content suggestions for an engaging presentation that highlights the benefits of our software solutions in the telco sector, specifically targeting C-level executives.
+    - Can you provide assistance in creating a compelling presentation that educates our sales team about the unique selling points of our Red Hat services and API-based products for the telco industry?
+    - Help me craft a persuasive presentation that demonstrates how our software solutions can enhance operational efficiency and revenue generation for telco companies.
+    - I'm looking for content ideas to create an informative presentation on the integration capabilities of our API-based products with existing telco infrastructure.
+    - Assist me in developing a visually appealing presentation that showcases real-life use cases of our software solutions and their positive impact on telco companies.
+    - I need help in creating an attention-grabbing presentation that emphasizes the competitive advantage our Red Hat services and API-based products provide in the telco market.
+    - Can you provide content suggestions for a comprehensive presentation that covers the implementation process and post-sales support for our software solutions in the telco sector?
+    - Help me design an impactful presentation that highlights the scalability and flexibility of our software solutions to meet the evolving needs of telco companies.
+    - I'm seeking assistance in creating a persuasive presentation that illustrates the ROI and cost-saving potential of our Red Hat services and API-based products for telco clients.
+
+
+- intent: create_user_manual
+  examples: |
+    - user manual
+    - user guide
+    - manual and guides for products
+    - create an user manual and guideline book for our services
+    - guidelines document
+    - create a perfect user manual document
+    - Help me create a user manual or guide that is clear, concise, and user-friendly
+    - Help me create a user manual for our flagship telco software product, providing step-by-step instructions on installation, configuration, and usage.
+    - I need content suggestions for a comprehensive guide on integrating our API-based products with telco systems, covering authentication, data retrieval, and error handling.
+    - Can you assist me in drafting a user-friendly guide on troubleshooting common issues faced by telco operators while using our software solutions?
+    - I'm looking for assistance in creating a concise user manual for our Red Hat service offerings, highlighting the key features, benefits, and best practices.
+    - Help me develop a detailed guide on API usage in the telco sector, including code examples, API endpoints, and data formats.
+    - I need content suggestions for a user manual specifically tailored to telco network administrators, providing in-depth instructions on managing and configuring our software solutions.
+    - Can you assist me in creating a user-friendly guide that explains the integration process between our software and existing telco infrastructure, focusing on compatibility and data synchronization?
+    - I'm looking for guidance on creating a visually appealing user manual with diagrams and screenshots, making it easier for telco professionals to understand and follow.
+    - Help me draft a comprehensive guide on best practices for securing telco networks when using our software solutions, covering topics such as access control, encryption, and vulnerability management.
+    - I need content suggestions for a user manual that highlights the unique value proposition of our software solutions in the telco sector, showcasing real-life use cases and success stories.
+
+
+- intent: create_legal_documents
+  examples: |
+    - legal documents
+    - create a legal document
+    - agreement
+    - generate an agreeent to share with clients
+    - regulations
+    - generate terms and regulation document
+    - industry standards
+    - Assist me in creating legally sound and customized legal documents
+    - Assist me in creating a legally sound and customized Software Services Agreement specifically designed for our telco clients using Red Hat services and API-based products.
+    - I need help in drafting a comprehensive Non-Disclosure Agreement (NDA) tailored for our software company's partnerships with telco companies, ensuring protection of confidential information related to Red Hat services and API-based products.
+    - Could you provide content suggestions for an End User License Agreement (EULA) that covers the use of our software solutions by telco companies, incorporating the terms and conditions related to Red Hat services and API-based products?
+    - Assist me in creating a Service Level Agreement (SLA) template that aligns with the telco industry standards, specifically outlining the performance expectations and support for Red Hat services and API-based products.
+    - I'm in need of a comprehensive Master Services Agreement (MSA) that covers our software company's provision of services to telco clients, including the utilization of Red Hat services and API-based products.
+    - Could you help me draft a customized Vendor Agreement for our software company's relationships with telco vendors, specifically addressing the utilization of Red Hat services and API-based products?
+    - I need assistance in creating a Software Development Agreement that encompasses the development of customized solutions for telco clients, incorporating the utilization of Red Hat services and API-based products.
+    - Assist me in drafting a well-defined Intellectual Property Assignment Agreement specifically tailored for our software company's collaborations with telco partners, addressing the ownership and protection of innovations related to Red Hat services and API-based products.
+    - I'm looking for content suggestions for a Reseller Agreement that outlines the terms and conditions for reselling our software solutions to telco companies, including the provision of Red Hat services and API-based products.
+    - Could you provide guidance in creating a Data Protection and Privacy Policy that ensures compliance with relevant regulations for our software company's handling of telco client data, particularly when utilizing Red Hat services and API-based products?
+
+
+- intent: create_marketing_collateral
+  examples: |
+    - collateral
+    - marketing collateral
+    - drafting support materials for marketing plan
+    - generating content about marketing resources
+    - Assist me in creating compelling marketing collateral that drives engagement and boosts brand presence
+    - Help me create compelling marketing collateral that highlights our software company's expertise in the telco sector, showcasing how our Red Hat services and API-based products drive innovation and efficiency for telecom providers.
+    - I need assistance in developing marketing collateral that effectively communicates the value proposition of our software solutions tailored for the telco sector, showcasing real-life case studies and success stories of how our Red Hat services and API-based products have transformed telecom businesses.
+    - Can you provide content suggestions for marketing collateral that positions our software company as a trusted partner for telco industry leaders, emphasizing how our Red Hat services and API-based products enable seamless digital transformation and drive revenue growth?
+    - Assist me in creating engaging marketing support materials that showcases the unique features and benefits of our software solutions for telco providers, highlighting the role of our Red Hat services and API-based products in delivering superior performance, scalability, and security.
+    - I'm looking for content ideas to develop collateral of marketing that targets C-level executives in the telco sector, effectively conveying how our software company's Red Hat services and API-based products empower digital innovation, streamline operations, and drive competitive advantage.
+    - Help me craft persuasive marketing collateral that positions our software company as a thought leader in the telco industry, showcasing our expertise in leveraging Red Hat services and API-based products to address industry challenges and drive tangible business outcomes.
+    - I need assistance in developing marketing collateral that resonates with telco professionals, clearly articulating the value proposition of our software solutions and the role of our Red Hat services and API-based products in addressing their specific pain points and driving operational efficiency.
+    - Can you provide content suggestions for collateral that highlights our software company's strong partnerships with leading telco providers, emphasizing how our Red Hat services and API-based products integrate seamlessly into their existing infrastructure, enabling rapid deployment and accelerated time-to-market.
+    - Assist me in creating visually appealing marketing collateral that effectively communicates the benefits of our software solutions for the telco sector, showcasing real-time data, compelling visuals, and customer testimonials, while highlighting the role of our Red Hat services and API-based products in ensuring seamless integration and scalability.
+    - I'm looking for content ideas to develop marketing collateral that differentiates our software company in the highly competitive telco market, focusing on the unique value of our Red Hat services and API-based products in driving digital transformation, enhancing customer experience, and enabling revenue growth for telecom businesses.
+
+
+- intent: create_likedin_marketing_caption
+  examples: |
+    - likedin marketing caption
+    - caption for linkedin
+    - Linkedin captions
+    - Give me an attractive caption of linkedin
+    - Assist me in creating compelling caption for marketing on LinkedIn.
+    - Generate a captivating caption that highlights our software company's expertise in the telco sector and promotes our innovative Red Hat services and API-based products.
+    - Craft a LinkedIn caption that showcases how our software solutions are transforming the telco industry and driving digital innovation in partnership with Red Hat.
+    - Create a compelling caption that captures the attention of telco professionals on LinkedIn, emphasizing the value of our software products and services in improving operational efficiency.
+    - Develop a captivating LinkedIn caption that highlights our software company's specialization in the telco sector and promotes the benefits of our API-based products for telecom businesses.
+    - Generate an engaging caption that demonstrates the impact of our software solutions in the telco sector, emphasizing how they enable digital transformation and drive business growth.
+    - Craft a LinkedIn caption that showcases our software company's success stories in the telco industry, highlighting how our Red Hat services and API-based products have delivered measurable results for clients.
+    - Create a compelling caption that positions our software company as a leader in the telco sector, highlighting our expertise in delivering innovative solutions and our strong partnership with Red Hat.
+    - Develop an attention-grabbing LinkedIn caption that highlights the unique features and capabilities of our software products for telco companies, showcasing how they solve industry-specific challenges.
+    - Generate a captivating caption that highlights our software company's thought leadership in the telco sector, showcasing our insights and expertise through engaging content and industry-relevant discussions.
+    - Craft a LinkedIn caption that invites telco professionals to explore our software company's offerings, emphasizing the value of our Red Hat services and API-based products in driving efficiency and accelerating business growth.
+
+
+- intent: create_blog_content
+  examples: |
+    - blog
+    - blog content
+    - blog articles
+    - Drafting blog posts
+    - Content to highlight my blog
+    - generate articles and posts for personal blog
+    - Assist me in creating compelling content for my blog.
+    - Help me create engaging content for our blog that highlights the benefits of our Red Hat services for telco operators and how they can enhance their network infrastructure.
+    - I need assistance in crafting a blog post that showcases real-life use cases of our API-based products in the telco sector, demonstrating how they enable seamless integration and improved operational efficiency.
+    - Can you provide content suggestions for a blog article that discusses the latest trends in the telco industry and how our software company is addressing the evolving needs of telco operators with innovative Red Hat solutions?
+    - I'm looking for ideas on writing a blog post that explains the importance of open-source software in the telco sector and how our software company is leading the way with our Red Hat offerings.
+    - Assist me in creating a captivating blog article that highlights the unique features of our API-based products and their impact on driving digital transformation in the telco industry.
+    - I need content suggestions for a blog post that explores the challenges faced by telco operators in their digital transformation journey and how our software company's Red Hat services can help overcome those challenges.
+    - Can you help me draft a thought leadership piece for our blog that discusses the future of telco networks and the role our software company plays in shaping the industry with our innovative solutions?
+    - Assist me in creating an informative blog post that educates readers about the benefits of containerization in the telco sector and how our Red Hat services enable telco operators to achieve greater scalability and agility.
+    - I'm looking for content suggestions for a blog article that highlights the successful partnerships our software company has formed with leading telco operators, showcasing the positive impact of our solutions on their business operations.
+    - Help me craft a compelling blog post that discusses the value of open APIs in the telco industry and how our software company's API-based products empower telco operators to deliver enhanced services and experiences to their customers.
+
+
+- intent: create_instagram_marketing_caption
+  examples: |
+    - Instagram caption
+    - marketing caption for instagram
+    - Instagram post caption for our marketing
+    - Generate an attractive content for an Instagram post
+    - Assist me in creating captivating caption for Instagram-based marketing
+    - Help us stand out in the telco industry with our innovative Red Hat services and API-based products. Can you suggest a captivating Instagram caption to grab the attention of our target audience?
+    - Looking to make waves in the telco sector? Our software company brings you cutting-edge Red Hat services and game-changing API-based products. What engaging Instagram caption can we use to showcase our offerings?
+    - Unlock the potential of telco innovation with our software solutions. We offer Red Hat services and API-based products that revolutionize the industry. Help us craft an Instagram caption that captures our unique value proposition.
+    - Telco transformation starts here! Our software company combines Red Hat expertise with powerful API-based products to drive success in the industry. Can you provide an Instagram caption that highlights our game-changing solutions?
+    - Join the digital revolution in the telco sector with our software company. We deliver top-notch Red Hat services and groundbreaking API-based products. Assist us in creating an Instagram caption that sparks curiosity and excitement.
+    - Telco excellence at your fingertips! Our software company empowers businesses with Red Hat services and API-based products that drive growth and innovation. Help us craft an Instagram caption that conveys our expertise.
+    - Telco leaders choose us for our Red Hat services and API-based products that optimize performance and accelerate success. Provide us with a captivating Instagram caption to showcase our value in the industry.
+    - In the fast-paced telco sector, our software company stands out with our comprehensive Red Hat services and API-based products. We need an Instagram caption that communicates our commitment to innovation.
+    - Telecommunications meet technology excellence. Our software company offers unparalleled Red Hat services and API-based products for the telco industry. Can you suggest an Instagram caption that showcases our unique blend of expertise?
+    - Telco revolution starts here! We're the software company trusted by industry leaders for our Red Hat services and API-based products. Assist us in creating an Instagram caption that resonates with telco professionals seeking transformation.
+
+
+- intent: create_datasheet_content
+  examples: |
+    - Datasheet
+    - Datasheet content
+    - generate information for a datasheet
+    - I need to create a document including the datasheets.
+    - Assist me in creating informative and visually appealing content for a datasheet
+    - Assist me in creating a datasheet that highlights the key features and benefits of our Red Hat services for telco providers. We want to showcase how our solutions help streamline operations and enhance performance.
+    - I need help in developing a visually appealing datasheet that showcases our API-based products for the telco industry. Can you provide content suggestions that emphasize the value and versatility of our solutions?
+    - Could you assist me in creating a comprehensive datasheet that explains the integration capabilities of our software products with Red Hat technologies? We want to demonstrate the seamless interoperability for telco providers.
+    - I'm looking for content suggestions to include in a datasheet that highlights our software company's expertise in the telco sector. We want to showcase our successful projects and case studies to build credibility.
+    - Can you help me create a datasheet that effectively communicates the performance benefits of our Red Hat services for telco providers? We want to highlight how our solutions optimize network efficiency and reliability.
+    - I need assistance in designing a visually appealing datasheet that illustrates the implementation process of our API-based products for telco providers. We want to provide a step-by-step guide for easy understanding.
+    - Could you provide content suggestions for a datasheet that showcases the cost-saving advantages of our software solutions for telco companies? We want to demonstrate the ROI and financial benefits.
+    - Assist me in creating a datasheet that emphasizes the security features of our Red Hat services and API-based products for the telco industry. We want to highlight how we protect sensitive data and ensure regulatory compliance.
+    - I'm looking for help in crafting a datasheet that showcases the scalability and flexibility of our software solutions for telco providers. Can you suggest content that demonstrates how our products adapt to changing business needs?
+    - Can you assist me in creating a datasheet that highlights the customer success stories of our software company in the telco sector? We want to showcase how our solutions have delivered tangible results for clients.
+
+
+- intent: export_gmail
+  examples: |
+    - export to Gmail
+    - open in gmail
+    - Send it
+    - send the email
+    - send to Gmail
+    - copy content to gmail
+    - Compose a new email
+
+
+- intent: export_to_gdoc
+  examples: |
+    - export to Google doc
+    - open in google
+    - Send it to google documents
+    - open the editor
+    - send to Gdocs
+    - copy content to Google documents

@@ -52,9 +52,19 @@ with open(config["OpenAI"]["email_parameters_prompt_file"], "r") as file:
 with open(config["OpenAI"]["email_body_prompt_file"], "r") as file:
     email_body_prompt = file.read()
 
+with open(config["OpenAI"]["document_drafting_prompt_file"], "r") as file:
+    document_parameters_prompt = file.read()
+
+with open(config["OpenAI"]["creative_content_prompt_file"], "r") as file:
+    creative_content_prompt = file.read()
+
 language_cache = {}
 email_drafting_cache = {}
 email_parameters_cache = {}
+document_drafting_cache = {}
+document_drafting_parameters_cache = {}
+creative_content_cache = {}
+creative_content_parameters_cache = {}
 
 FIRST_STATE_ID = 1
 SECOND_STATE_ID = 2
@@ -91,7 +101,7 @@ async def process_chat_request(request: Request):
                 sender_id, message_text)
             email_drafting_cache[sender_id] = FIRST_STATE_ID
             email_parameters_cache[sender_id]["follow_up_prompt"] = response_text
-            print(response_text)
+
             return {"sender": sender_id, "response": response_text}
 
         else:
@@ -113,7 +123,7 @@ async def process_chat_request(request: Request):
             if email_drafting_cache[sender_id] == SECOND_STATE_ID:
                 missing_feature = get_email_drafting_missing_feature(sender_id)
                 email_parameters_cache[sender_id][missing_feature] = message_text
-
+                print(email_parameters_cache)
                 if check_email_drafting_missing_featues(sender_id):
                     response_text = get_email_drafting_missing_feature_response(
                         sender_id)
@@ -122,11 +132,60 @@ async def process_chat_request(request: Request):
                     email_drafting_cache[sender_id] = THIRD_STATE_ID
 
             if email_drafting_cache[sender_id] == THIRD_STATE_ID:
-                email_content = get_email_body_gpt_response(
+                generated_email_content = get_email_body_gpt_response(
                     sender_id, email_parameters_cache[sender_id])
+                email_parameters_cache[sender_id]["email_body"] = generated_email_content
+                email_content = email_parameters_cache[sender_id]
                 content_translator(language, email_content)
                 email_drafting_cache[sender_id] = FOURTH_STATE_ID
                 return {"sender_id": sender_id, "response": email_content["email_body"]}
+
+    elif button == "Document Drafting":
+        if sender_id not in document_drafting_cache:
+            document_drafting_parameters_cache[sender_id] = {
+                "initial_prompt": message_text}
+            intent, response_text = get_intent_response(
+                sender_id, message_text)
+            document_drafting_cache[sender_id] = FIRST_STATE_ID
+            document_drafting_parameters_cache[sender_id]["follow_up_prompt"] = response_text
+
+            return {"sender": sender_id, "response": response_text}
+
+        else:
+            if document_drafting_cache[sender_id] == FIRST_STATE_ID:
+                document_drafting_parameters_cache[sender_id]["follow_up_response"] = message_text
+                document_content = get_document_content_gpt_response(
+                    sender_id, document_drafting_parameters_cache[sender_id])
+                content_translator(language, document_content)
+                document_drafting_parameters_cache[sender_id].update(
+                    {"content": document_content})
+                document_drafting_cache[sender_id] = SECOND_STATE_ID
+
+                return {"sender_id": sender_id, "response": document_content}
+
+    elif button == "Creative Content":
+        if sender_id not in creative_content_cache:
+            creative_content_parameters_cache[sender_id] = {
+                "initial_prompt": message_text}
+            intent, response_text = get_intent_response(
+                sender_id, message_text)
+            creative_content_cache[sender_id] = FIRST_STATE_ID
+            creative_content_parameters_cache[sender_id]["follow_up_prompt"] = response_text
+
+            return {"sender": sender_id, "response": response_text}
+
+        else:
+            if creative_content_cache[sender_id] == FIRST_STATE_ID:
+                creative_content_parameters_cache[sender_id]["follow_up_response"] = message_text
+                creative_document_content = get_creative_content_gpt_response(
+                    sender_id, creative_content_parameters_cache[sender_id])
+
+                content_translator(language, creative_document_content)
+                creative_content_parameters_cache[sender_id].update(
+                    {"content": creative_document_content})
+                creative_content_cache[sender_id] = SECOND_STATE_ID
+
+                return {"sender_id": sender_id, "response": creative_document_content}
 
 
 def get_intent_response(sender_id, message_text):
@@ -259,13 +318,37 @@ def get_email_parameter_gpt_response(sender_id, message_text):
     return response_text
 
 
+def get_document_content_gpt_response(sender_id, message_text):
+    prompt_text = document_parameters_prompt + \
+        "\nRequest:" + str(message_text) + "\nOutput:"
+
+    response = send_gpt_request(sender_id, prompt_text)
+    response_dict = json.loads(json.dumps(response))
+    logger.info(
+        f'{sender_id}|OPENAI_DOCUMENT_PARAMETERS_RESPONSE|{response_dict}')
+    response_text = response_dict["choices"][0]["text"]
+    return response_text
+
+
+def get_creative_content_gpt_response(sender_id, message_text):
+    prompt_text = creative_content_prompt + \
+        "\nRequest:" + str(message_text) + "\nOutput:"
+
+    response = send_gpt_request(sender_id, prompt_text)
+    response_dict = json.loads(json.dumps(response))
+    logger.info(
+        f'{sender_id}|OPENAI_DOCUMENT_PARAMETERS_RESPONSE|{response_dict}')
+    response_text = response_dict["choices"][0]["text"]
+    return response_text
+
+
 def get_email_body_gpt_response(sender_id, parameter_json):
     prompt_text = email_body_prompt + "\nRequest:" + \
-        str(parameter_json) + "\nJSON:"
+        str(parameter_json) + "\nOutput:"
 
     response = send_gpt_request(sender_id, prompt_text)
     response_dict = json.loads(json.dumps(response))
     logger.info(f'{sender_id}|OPENAI_EMAIL_BODY_RESPONSE|{response_dict}')
-    response_text = json.loads(response_dict["choices"][0]["text"])
+    response_text = response_dict["choices"][0]["text"]
 
     return response_text

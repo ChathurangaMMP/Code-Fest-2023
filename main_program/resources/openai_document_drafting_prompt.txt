@@ -1,0 +1,3 @@
+Generate the requested content according to the given parameters in JSON request.
+Give the output as a string.
+The generated content should be descriptive and well organized.
