@@ -3,7 +3,7 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 
-SLACK_BOT_TOKEN = 'xoxb-5300103418852-5294684594885-9K580jYrkK0OXFUZzJuiGozJ'
+SLACK_BOT_TOKEN = ''
 slack_client = WebClient(token=SLACK_BOT_TOKEN)
 
 app = FastAPI()
