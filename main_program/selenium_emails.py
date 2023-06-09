@@ -8,6 +8,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 import time
 
 # Set up Chrome driver
@@ -47,6 +48,9 @@ def send_email(driver, recipients, subject, message):
     else:
         print("Gmail window is not open")
         driver.get("https://mail.google.com/mail")
+        # driver.execute_script("window.open('%s', '_blank')" %
+        #                       "https://mail.google.com/mail")
+        # driver.switch_to.window(driver.window_handles[-1])
 
     # Perform actions on the Gmail tab, e.g., click the compose button
     compose_button = driver.find_element(By.XPATH, '//div[text()="Compose"]')
@@ -66,6 +70,45 @@ def send_email(driver, recipients, subject, message):
     message_body = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, '//div[@role="textbox"]')))
     message_body.send_keys(message)
+
+
+def export_gdoc(driver, message):
+    # Get the list of tab URLs
+    tab_urls = driver.window_handles
+
+    # Check if Gmail is open
+    is_gdoc_open = False
+
+    for handle in tab_urls:
+        driver.switch_to.window(handle)
+        url = driver.current_url
+        print(url)
+        if 'docs.google.com' in url:
+            is_gdoc_open = True
+            break
+
+    if is_gdoc_open:
+        print("Google Doc window is open")
+    else:
+        print("Google Doc window is not open")
+        driver.get("https://docs.google.com/document/")
+        # driver.execute_script("window.open('%s', '_blank')" %
+        #                       "https://mail.google.com/mail")
+        # driver.switch_to.window(driver.window_handles[-1])
+
+    # Perform actions on the Gmail tab, e.g., click the compose button
+    new_doc_button = driver.find_element(By.XPATH, '//*[@id=":1i"]/div[1]/img')
+    new_doc_button.click()
+
+   # Locate the document's editable area
+    editable_area = driver.switch_to.active_element
+
+    # Move to the editable area and insert text at the current cursor position
+    ActionChains(driver).move_to_element(
+        editable_area).click().send_keys(message).perform()
+
+    # Switch back to default content
+    # driver.switch_to.default_content()
 
 
 # # Sign in to Gmail

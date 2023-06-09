@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import openai
 from language_api import *
 from selenium_emails import *
+from fuzzywuzzy import fuzz
 
 
 class UIRequest(BaseModel):
@@ -74,6 +75,10 @@ FIFTH_STATE_ID = 5
 
 english_http_nlu_endpoint = config["Rasa"]["english_http_nlu_endpoint"]
 
+caches_list = [language_cache, email_drafting_cache, email_parameters_cache,
+               document_drafting_cache, document_drafting_parameters_cache,
+               creative_content_cache, creative_content_parameters_cache]
+
 
 @app.post("/chat")
 async def process_chat_request(request: Request):
@@ -93,6 +98,12 @@ async def process_chat_request(request: Request):
     message_text = message_translator(message, language)
     logger.info(f'{sender_id}|{language}|{message_text}')
 
+    if is_fuzzy_matched_to_exit(message_text):
+        clear_caches_in_exit(sender_id)
+        response_text = "All the actions you started have been \
+            successfully closed. \n\nIs there anything else I can assist you with?"
+        return {"sender": sender_id, "response": response_text}
+
     if button == "Email Drafting":
         if sender_id not in email_drafting_cache:
             email_parameters_cache[sender_id] = {
@@ -107,8 +118,15 @@ async def process_chat_request(request: Request):
         else:
             if email_drafting_cache[sender_id] == FIRST_STATE_ID:
                 email_parameters_cache[sender_id]["follow_up_response"] = message_text
-                email_parameters = get_email_parameter_gpt_response(
-                    sender_id, email_parameters_cache[sender_id])
+                try:
+                    email_parameters = get_email_parameter_gpt_response(
+                        sender_id, email_parameters_cache[sender_id])
+                except Exception as error_:
+                    logger.info(
+                        f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
+                    response_text = "Oops, We're experiencing some connection \
+                        issues right now. \n\nCould you please try again?"
+                    return {"sender_id": sender_id, "response": response_text}
 
                 email_parameters_cache[sender_id].update(email_parameters)
                 email_drafting_cache[sender_id] = SECOND_STATE_ID
@@ -123,7 +141,7 @@ async def process_chat_request(request: Request):
             if email_drafting_cache[sender_id] == SECOND_STATE_ID:
                 missing_feature = get_email_drafting_missing_feature(sender_id)
                 email_parameters_cache[sender_id][missing_feature] = message_text
-                print(email_parameters_cache)
+
                 if check_email_drafting_missing_featues(sender_id):
                     response_text = get_email_drafting_missing_feature_response(
                         sender_id)
@@ -132,8 +150,16 @@ async def process_chat_request(request: Request):
                     email_drafting_cache[sender_id] = THIRD_STATE_ID
 
             if email_drafting_cache[sender_id] == THIRD_STATE_ID:
-                generated_email_content = get_email_body_gpt_response(
-                    sender_id, email_parameters_cache[sender_id])
+                try:
+                    generated_email_content = get_email_body_gpt_response(
+                        sender_id, email_parameters_cache[sender_id])
+                except Exception as error_:
+                    logger.info(
+                        f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
+                    response_text = "Oops, We're experiencing some connection \
+                        issues right now. \n\t\nCould you please try again?"
+                    return {"sender_id": sender_id, "response": response_text}
+
                 email_parameters_cache[sender_id]["email_body"] = generated_email_content
                 email_content = email_parameters_cache[sender_id]
                 content_translator(language, email_content)
@@ -154,8 +180,18 @@ async def process_chat_request(request: Request):
         else:
             if document_drafting_cache[sender_id] == FIRST_STATE_ID:
                 document_drafting_parameters_cache[sender_id]["follow_up_response"] = message_text
-                document_content = get_document_content_gpt_response(
-                    sender_id, document_drafting_parameters_cache[sender_id])
+                gpt_prompt_params = document_drafting_parameters_cache[sender_id]
+                del gpt_prompt_params["follow_up_prompt"]
+                try:
+                    document_content = get_document_content_gpt_response(
+                        sender_id, gpt_prompt_params)
+                except Exception as error_:
+                    logger.info(
+                        f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
+                    response_text = "Oops, We're experiencing some connection \
+                        issues right now. \n\t\nCould you please try again?"
+                    return {"sender_id": sender_id, "response": response_text}
+
                 content_translator(language, document_content)
                 document_drafting_parameters_cache[sender_id].update(
                     {"content": document_content})
@@ -177,8 +213,15 @@ async def process_chat_request(request: Request):
         else:
             if creative_content_cache[sender_id] == FIRST_STATE_ID:
                 creative_content_parameters_cache[sender_id]["follow_up_response"] = message_text
-                creative_document_content = get_creative_content_gpt_response(
-                    sender_id, creative_content_parameters_cache[sender_id])
+                try:
+                    creative_document_content = get_creative_content_gpt_response(
+                        sender_id, creative_content_parameters_cache[sender_id])
+                except Exception as error_:
+                    logger.info(
+                        f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
+                    response_text = "Oops, We're experiencing some connection \
+                        issues right now. \n\t\nCould you please try again?"
+                    return {"sender_id": sender_id, "response": response_text}
 
                 content_translator(language, creative_document_content)
                 creative_content_parameters_cache[sender_id].update(
@@ -216,7 +259,10 @@ def get_intent_response(sender_id, message_text):
 
 
 @app.post("/send_email")
-async def process_send_email_request(request: UIRequest):
+async def process_send_email_request(request: Request):
+    json_data = await request.json()
+    request = UIRequest.parse_obj(json_data)
+
     sender_id = request.sender
     message = request.message
     language = request.language  # default language is English.
@@ -229,12 +275,55 @@ async def process_send_email_request(request: UIRequest):
                email_content["subject"], message)
 
     clear_email_drafting_caches(sender_id)
+    logger.info(f'{sender_id}|EMAIL_CACHE_CLEANED')
     return {"sender_id": sender_id, "response": "Email is sent successfully."}
+
+
+@app.post("/export_gdoc")
+async def process_send_email_request(request: Request):
+    json_data = await request.json()
+    request = UIRequest.parse_obj(json_data)
+
+    sender_id = request.sender
+    message = request.message
+    language = request.language  # default language is English.
+    button = request.button
+
+    driver = set_up_chrome_driver()
+    export_gdoc(driver, message)
+
+    clear_document_drafting_caches(sender_id, button)
+    logger.info(f'{sender_id}|DOCUMENT_DRAFTING_CACHE_CLEANED')
+    return {"sender_id": sender_id, "response": "Content is successfully exported to Google Documents."}
+
+
+def is_fuzzy_matched_to_exit(message_text):
+    similarity = fuzz.ratio('exit', message_text.lower())
+    if similarity >= 80:
+        return True
+    else:
+        return False
+
+
+def clear_caches_in_exit(sender_id):
+    for cache in caches_list:
+        if sender_id in cache:
+            del cache[sender_id]
 
 
 def clear_email_drafting_caches(sender_id):
     del email_drafting_cache[sender_id]
     del email_parameters_cache[sender_id]
+
+
+def clear_document_drafting_caches(sender_id, button):
+    if button == "Document Drafting":
+        del document_drafting_cache[sender_id]
+        del document_drafting_parameters_cache[sender_id]
+
+    elif button == "Creative Content":
+        del creative_content_cache[sender_id]
+        del creative_content_parameters_cache[sender_id]
 
 
 def get_email_drafting_missing_feature(sender_id):
@@ -296,7 +385,7 @@ def send_gpt_request(sender_id, prompt_text):
     response = openai.Completion.create(
         model=config["GPT_request"]["model"],
         prompt=prompt_text,
-        temperature=int(config["GPT_request"]["temperature"]),
+        temperature=float(config["GPT_request"]["temperature"]),
         max_tokens=int(config["GPT_request"]["max_tokens"]),
         top_p=int(config["GPT_request"]["top_p"]),
         frequency_penalty=int(config["GPT_request"]["frequency_penalty"]),

@@ -1,8 +1,8 @@
-1. Extract the following list of features from the given text and return the results as a JSON. 
-2. The subject feature needs to be generated according to the purpose of the email.
+1. Extract the following list of features from the given text and return the results as a JSON. This use case is related to a request and response chatbot.
+2. The subject feature needs to be generated according to the purpose of the email. Make it meaningful.
 3. If the subject is related to work, use a professional tone. 
-4. If the subject is related to personal purpose, user a friendly and warm tone.
-5. The request is a JSON object and it has following list of keys = ["initial_prompt", "follow_up_prompt", "follow_up_response"].
+4. If the subject is related to a personal purpose, use a friendly and warm tone.
+5. The request is a JSON object and it has the following list of keys = ["initial_prompt", "follow_up_prompt", "follow_up_response"]. "initial_prompt" is the text that the user entered at the beginning. "follow_up_prompt" is the text given by the bot, to the user as the response. "follow_up_response" is the text, that the user entered after follow_up_prompt. This is like a conversation. Generate and extract features accordingly by considering these.
 6. List of features that needs to be there in the JSON output = ["recipient_name", "recipient_email", "subject"]. 
 7. If a feature is missing, add "" as the value to the JSON.
 8. Use " to wrap the JSON keys and values.

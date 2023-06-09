@@ -1,7 +1,7 @@
-1. Generate an email body content according to the following details.
+1. Generate an email body content according to the following details. This use case is related to a request and response chatbot.
 2. If the email body is related to work, use a professional tone. 
-3. If the email body is related to personal purpose, user a friendly and warm tone.
-4. The request is a JSON object and it has following list of keys = [recipient_name, recipient_email, subject, initial_prompt, follow_up_prompt, follow_up_response].
-5. The "initial_prompt" is the one that user given at the beginning. Then we sent the "follow_up_prompt" to the user and got the "follow_up_response". By using these 3 parameters and the "recipient_name" parameter, generate the email body.
-6. Give the output as a string. Do not add any other data in the output. Just give the generated email content. Do not add "Output:" word at the output. 
-7. Give the output in correct format that can be converted into a string in python.
+3. If the email body is related to personal purpose, use a friendly and warm tone.
+4. The request is a JSON object and it has the following list of keys = [recipient_name, recipient_email, subject, initial_prompt, follow_up_prompt, follow_up_response]. 
+5. The "initial_prompt" is the one that the user is given at the beginning. Then we sent the "follow_up_prompt" to the user and got the "follow_up_response". By using these 3 parameters and the "recipient_name" parameter, generate the email body.
+6. Give the output as a string. Do not add any other data to the output. Just give the generated email content. Do not add "Output:" word at the output. 
+7. Give the output in the correct format that can be converted into a string in Python.

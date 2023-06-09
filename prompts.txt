@@ -1,25 +1,8 @@
-for Email Drafting
-    TaskBuddy will help you with any email of your choice:
-        Introduction Email
-        Thank You Email
-        Complaint Solver Email
-        Meeting Request Email
-        Network Engage Email
-        Persuasive Email
-        Apology Email
+1. Extract the key points, features and requirements to generate content from the given texts. This use case is related to a request and response chatbot.
+2. Use a professional tone to draft the document content.
+3. The request is a JSON object and it has the following list of keys = ["initial_prompt", "follow_up_prompt", "follow_up_response"]. "initial_prompt" is the text that the user entered at the beginning. "follow_up_prompt" is the text given by the bot, to the user as the response. "follow_up_response" is the text, that the user entered after follow_up_prompt. This is like a conversation. Draft the requested document contents accordingly by considering these.
+4. The generated content should be descriptive and well organized.
+5. Give the output as a string. Do not add any other data to the output. Just give the generated document content. Do not add "Output:" word at the output. 
+6. Give the output in the correct format that can be converted into a string in Python.
 
-for Document Drafting
-    TaskBuddy will help you with any document of your choice:
-        Project Proposal
-        Business Report
-        Presentation
-        User Manual & Guide
-        Legal Document
-        Marketing Collateral
-
-for Creative Content
-    TaskBuddy will help you with any creative content of your choice:
-        LinkedIn Caption
-        Blog Content
-        Instagram Caption
-        Datasheet Content
+Request:{"initial_prompt":"Help me create a user manual or guide that is clear, concise, and user-friendly", "follow_up_prompt":"Welcome to our AI-powered document drafting assistant! I'm here to assist you in creating a user manual or guide that effectively communicates instructions and information to your users. Just provide me with the details about the product or service, its features, and the target audience. Whether it's step-by-step instructions, troubleshooting tips, or FAQ sections, I'll generate content suggestions that are easy to understand and follow. Together, we'll create a user manual or guide that empowers your users and enhances their experience. Let's craft a user-friendly document that ensures your users can make the most of your product or service!\n\nNote:\nTry to send the requesting parameters in point form", "follow_up_response":"It is a smart chatbot. users can interact with it. It is giving responses according to the user inputs. It has voice input feature as well. We are mainly targetting the banking and insurance companies to promote this product."}

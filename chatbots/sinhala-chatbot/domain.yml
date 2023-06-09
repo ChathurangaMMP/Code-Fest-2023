@@ -1,0 +1,22 @@
+version: "3.1"
+
+intents:
+  - compelling_introduction_email
+  - thank_you_email
+  - complaint_resolve_email
+  - meeting_request_email
+  - networking_email
+  - persuasive_email
+  - apology_email
+  - create_project_proposal
+  - create_bussiness_report
+  - create_presentation
+  - create_user_manual
+  - create_legal_documents
+  - create_marketing_collateral
+  - create_likedin_marketing_caption
+  - create_blog_content
+  - create_instagram_marketing_caption
+  - create_datasheet_content
+  - export_gmail
+  - export_to_gdoc
