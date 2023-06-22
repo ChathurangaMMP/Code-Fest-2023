@@ -110,7 +110,8 @@ def export_gdoc(driver, message):
     # Switch back to default content
     # driver.switch_to.default_content()
 
-
+# driver=set_up_chrome_driver()
+# export_gdoc(driver, "test test")
 # # Sign in to Gmail
 # email = "prasad.c@hsenidmobile.com"
 # password = ""

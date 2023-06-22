@@ -6,3 +6,4 @@
 6. Give the output as a string. Do not add any other data to the output. Just give the generated document content. Do not add "Output:" word at the output. 
 7. Give the output in the correct format that can be converted into a string in Python.
 8. In the Request text, consider "\n" characters as new lines.
+9. Do not tell how to do the requested requirements. Instead of that, generate the requested content.

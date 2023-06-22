@@ -97,194 +97,221 @@ def message(payload):
     message_text = event.get('text')
     language = "English"
 
-    if is_fuzzy_matched_to_exit(message_text):
-        clear_caches_in_exit(sender_id)
-        response_text = "All the actions you started have been \
-            successfully closed. \n\nIs there anything else I can assist you with?"
-        return {"sender": sender_id, "response": response_text}
-
-    if is_fuzzy_matched_to_export_gmail(message_text):
-        pass
-        if BOT_ID != sender_id:
-            client.chat_postMessage(
-                channel=channel_id, text="Email is sent successfully.")
-            return
-
-    if is_fuzzy_matched_to_export_gdoc(message_text):
-        pass
-        if BOT_ID != sender_id:
-            client.chat_postMessage(
-                channel=channel_id, text="Content is successfully exported to Google Documents.")
-            return
-
-    if sender_id not in use_case_cache:
-        intent, response_text = get_intent_response(
-            sender_id, message_text)
-
-        if intent == "nlu_fallback":
+    if BOT_ID != sender_id:
+        if message_text.lower() == "exit":
+            clear_caches_in_exit(sender_id)
+            response_text = "All the actions you started have been successfully closed. \n\nIs there anything else I can assist you with?"
             if BOT_ID != sender_id:
-                client.chat_postMessage(channel=channel_id, text=response_text)
+                client.chat_postMessage(
+                    channel=channel_id, text=response_text)
                 return
 
-        use_case_cache[sender_id] = intent
+        # if message_text.lower() == "open in gmail":
+        #     email_content = email_parameters_cache[sender_id]
+        #     driver = set_up_chrome_driver()
+        #     send_email(driver, email_content["recipient_email"],
+        #                email_content["subject"], email_content["email_body"])
+        #     if BOT_ID != sender_id:
+        #         client.chat_postMessage(
+        #             channel=channel_id, text="Email is sent successfully.")
+        #         return
 
-    if use_case_cache[sender_id] in email_drafting_intents:
-        if sender_id not in email_drafting_cache:
-            email_parameters_cache[sender_id] = {
-                "initial_prompt": message_text}
+        # if message_text == "open in gdoc":
+        #     if sender_id in document_drafting_cache:
+        #         content = document_drafting_parameters_cache[sender_id]["content"]
+        #     elif sender_id in creative_content_cache:
+        #         content = creative_content_parameters_cache[sender_id]["content"]
+        #     driver = set_up_chrome_driver()
+        #     export_gdoc(driver, content)
+        #     if BOT_ID != sender_id:
+        #         client.chat_postMessage(
+        #             channel=channel_id, text="Content is successfully exported to Google Documents.")
+        #         return
 
-            email_drafting_cache[sender_id] = FIRST_STATE_ID
-            email_parameters_cache[sender_id]["follow_up_prompt"] = response_text
-            if BOT_ID != sender_id:
-                client.chat_postMessage(channel=channel_id, text=response_text)
-                return
+        if sender_id not in use_case_cache:
+            intent, response_text = get_intent_response(
+                sender_id, message_text)
 
-        else:
-            if email_drafting_cache[sender_id] == FIRST_STATE_ID:
-                email_parameters_cache[sender_id]["follow_up_response"] = message_text
-                try:
-                    email_parameters = get_email_parameter_gpt_response(
-                        sender_id, email_parameters_cache[sender_id])
-                except Exception as error_:
-                    logger.info(
-                        f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
-                    response_text = "Oops, We're experiencing some connection \
-                        issues right now. \n\nCould you please try again?"
-                    if BOT_ID != sender_id:
-                        client.chat_postMessage(
-                            channel=channel_id, text=response_text)
-                        return
+            if intent == "nlu_fallback":
+                if BOT_ID != sender_id:
+                    client.chat_postMessage(
+                        channel=channel_id, text=response_text)
+                    return
 
-                email_parameters_cache[sender_id].update(email_parameters)
-                email_drafting_cache[sender_id] = SECOND_STATE_ID
+            use_case_cache[sender_id] = intent
 
-                if check_email_drafting_missing_featues(sender_id):
-                    response_text = get_email_drafting_missing_feature_response(
+        if use_case_cache[sender_id] in email_drafting_intents:
+            if sender_id not in email_drafting_cache:
+                email_parameters_cache[sender_id] = {
+                    "initial_prompt": message_text}
+
+                email_drafting_cache[sender_id] = FIRST_STATE_ID
+                email_parameters_cache[sender_id]["follow_up_prompt"] = response_text
+                if BOT_ID != sender_id:
+                    client.chat_postMessage(
+                        channel=channel_id, text=response_text)
+                    return
+
+            else:
+                if email_drafting_cache[sender_id] == FIRST_STATE_ID:
+                    email_parameters_cache[sender_id]["follow_up_response"] = message_text
+                    try:
+                        email_parameters = get_email_parameter_gpt_response(
+                            sender_id, email_parameters_cache[sender_id])
+                    except Exception as error_:
+                        logger.info(
+                            f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
+                        response_text = "Oops, We're experiencing some connection issues right now. \n\nCould you please try again?"
+                        if BOT_ID != sender_id:
+                            client.chat_postMessage(
+                                channel=channel_id, text=response_text)
+                            return
+
+                    email_parameters_cache[sender_id].update(email_parameters)
+                    email_drafting_cache[sender_id] = SECOND_STATE_ID
+
+                    if check_email_drafting_missing_featues(sender_id):
+                        response_text = get_email_drafting_missing_feature_response(
+                            sender_id)
+
+                        if BOT_ID != sender_id:
+                            client.chat_postMessage(
+                                channel=channel_id, text=response_text)
+                            return
+                    else:
+                        email_drafting_cache[sender_id] = THIRD_STATE_ID
+
+                if email_drafting_cache[sender_id] == SECOND_STATE_ID:
+                    missing_feature = get_email_drafting_missing_feature(
                         sender_id)
+                    email_parameters_cache[sender_id][missing_feature] = message_text
 
+                    if check_email_drafting_missing_featues(sender_id):
+                        response_text = get_email_drafting_missing_feature_response(
+                            sender_id)
+                        if BOT_ID != sender_id:
+                            client.chat_postMessage(
+                                channel=channel_id, text=response_text)
+                            return
+                    else:
+                        email_drafting_cache[sender_id] = THIRD_STATE_ID
+
+                if email_drafting_cache[sender_id] == THIRD_STATE_ID:
+                    try:
+                        generated_email_content = get_email_body_gpt_response(
+                            sender_id, email_parameters_cache[sender_id])
+                    except Exception as error_:
+                        logger.info(
+                            f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
+                        response_text = "Oops, We're experiencing some connection issues right now. \n\t\nCould you please try again?"
+                        if BOT_ID != sender_id:
+                            client.chat_postMessage(
+                                channel=channel_id, text=response_text)
+                            return
+
+                    email_parameters_cache[sender_id]["email_body"] = generated_email_content
+                    email_content = email_parameters_cache[sender_id]
+
+                    content_translator(language, email_content)
+                    email_drafting_cache[sender_id] = FOURTH_STATE_ID
+
+                    email_parameters_cache[sender_id] = email_content
                     if BOT_ID != sender_id:
+                        print(10)
                         client.chat_postMessage(
-                            channel=channel_id, text=response_text)
-                        return
-                else:
-                    email_drafting_cache[sender_id] = THIRD_STATE_ID
-
-            if email_drafting_cache[sender_id] == SECOND_STATE_ID:
-                missing_feature = get_email_drafting_missing_feature(sender_id)
-                email_parameters_cache[sender_id][missing_feature] = message_text
-
-                if check_email_drafting_missing_featues(sender_id):
-                    response_text = get_email_drafting_missing_feature_response(
-                        sender_id)
-                    if BOT_ID != sender_id:
-                        client.chat_postMessage(
-                            channel=channel_id, text=response_text)
-                        return
-                else:
-                    email_drafting_cache[sender_id] = THIRD_STATE_ID
-
-            if email_drafting_cache[sender_id] == THIRD_STATE_ID:
-                try:
-                    generated_email_content = get_email_body_gpt_response(
-                        sender_id, email_parameters_cache[sender_id])
-                except Exception as error_:
-                    logger.info(
-                        f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
-                    response_text = "Oops, We're experiencing some connection \
-                        issues right now. \n\t\nCould you please try again?"
-                    if BOT_ID != sender_id:
-                        client.chat_postMessage(
-                            channel=channel_id, text=response_text)
+                            channel=channel_id, text=email_content["email_body"])
                         return
 
-                email_parameters_cache[sender_id]["email_body"] = generated_email_content
-                email_content = email_parameters_cache[sender_id]
+        elif use_case_cache[sender_id] in document_drafting_intents:
+            if sender_id not in document_drafting_cache:
+                document_drafting_parameters_cache[sender_id] = {
+                    "initial_prompt": message_text}
 
-                content_translator(language, email_content)
-                email_drafting_cache[sender_id] = FOURTH_STATE_ID
-
-                email_parameters_cache[sender_id] = email_content
+                document_drafting_cache[sender_id] = FIRST_STATE_ID
+                document_drafting_parameters_cache[sender_id]["follow_up_prompt"] = response_text
                 if BOT_ID != sender_id:
                     client.chat_postMessage(
-                        channel=channel_id, text=email_content["email_body"])
+                        channel=channel_id, text=response_text)
                     return
 
-    elif use_case_cache[sender_id] in document_drafting_intents:
-        if sender_id not in document_drafting_cache:
-            document_drafting_parameters_cache[sender_id] = {
-                "initial_prompt": message_text}
+            else:
+                if document_drafting_cache[sender_id] == FIRST_STATE_ID:
+                    document_drafting_parameters_cache[sender_id]["follow_up_response"] = message_text
+                    gpt_prompt_params = document_drafting_parameters_cache[sender_id]
+                    if "follow_up_prompt" in gpt_prompt_params:
+                        del gpt_prompt_params["follow_up_prompt"]
+                    try:
+                        document_content = get_document_content_gpt_response(
+                            sender_id, gpt_prompt_params)
+                    except Exception as error_:
+                        logger.info(
+                            f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
+                        response_text = "Oops, We're experiencing some connection issues right now. \n\t\nCould you please try again?"
+                        if BOT_ID != sender_id:
+                            client.chat_postMessage(
+                                channel=channel_id, text=response_text)
+                            return
 
-            document_drafting_cache[sender_id] = FIRST_STATE_ID
-            document_drafting_parameters_cache[sender_id]["follow_up_prompt"] = response_text
-            if BOT_ID != sender_id:
-                client.chat_postMessage(channel=channel_id, text=response_text)
-                return
+                    content_translator(language, document_content)
+                    document_drafting_parameters_cache[sender_id].update(
+                        {"content": document_content})
+                    document_drafting_cache[sender_id] = SECOND_STATE_ID
 
-        else:
-            if document_drafting_cache[sender_id] == FIRST_STATE_ID:
-                document_drafting_parameters_cache[sender_id]["follow_up_response"] = message_text
-                gpt_prompt_params = document_drafting_parameters_cache[sender_id]
-                del gpt_prompt_params["follow_up_prompt"]
-                try:
-                    document_content = get_document_content_gpt_response(
-                        sender_id, gpt_prompt_params)
-                except Exception as error_:
-                    logger.info(
-                        f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
-                    response_text = "Oops, We're experiencing some connection \
-                        issues right now. \n\t\nCould you please try again?"
                     if BOT_ID != sender_id:
                         client.chat_postMessage(
-                            channel=channel_id, text=response_text)
+                            channel=channel_id, text=document_content)
                         return
 
-                content_translator(language, document_content)
-                document_drafting_parameters_cache[sender_id].update(
-                    {"content": document_content})
-                document_drafting_cache[sender_id] = SECOND_STATE_ID
+                # if document_drafting_cache[sender_id] == SECOND_STATE_ID:
+                #     if sender_id in document_drafting_cache:
+                #         content = document_drafting_parameters_cache[sender_id]["content"]
+                #     elif sender_id in creative_content_cache:
+                #         content = creative_content_parameters_cache[sender_id]["content"]
+                #     driver = set_up_chrome_driver()
+                #     export_gdoc(driver, content)
+                #     clear_caches_in_exit()
+                #     if BOT_ID != sender_id:
+                #         client.chat_postMessage(
+                #             channel=channel_id, text="Content is successfully exported to Google Documents.")
+                #         return
 
-                if BOT_ID != sender_id:
-                    client.chat_postMessage(
-                        channel=channel_id, text=document_content)
-                    return
+        elif use_case_cache[sender_id] in creative_content_intents:
+            if sender_id not in creative_content_cache:
+                creative_content_parameters_cache[sender_id] = {
+                    "initial_prompt": message_text}
 
-    elif use_case_cache[sender_id] in creative_content_intents:
-        if sender_id not in creative_content_cache:
-            creative_content_parameters_cache[sender_id] = {
-                "initial_prompt": message_text}
-
-            creative_content_cache[sender_id] = FIRST_STATE_ID
-            creative_content_parameters_cache[sender_id]["follow_up_prompt"] = response_text
-
-            if BOT_ID != sender_id:
-                client.chat_postMessage(channel=channel_id, text=response_text)
-                return
-
-        else:
-            if creative_content_cache[sender_id] == FIRST_STATE_ID:
-                creative_content_parameters_cache[sender_id]["follow_up_response"] = message_text
-                try:
-                    creative_document_content = get_creative_content_gpt_response(
-                        sender_id, creative_content_parameters_cache[sender_id])
-                except Exception as error_:
-                    logger.info(
-                        f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
-                    response_text = "Oops, We're experiencing some connection \
-                        issues right now. \n\t\nCould you please try again?"
-                    if BOT_ID != sender_id:
-                        client.chat_postMessage(
-                            channel=channel_id, text=response_text)
-                        return
-
-                content_translator(language, creative_document_content)
-                creative_content_parameters_cache[sender_id].update(
-                    {"content": creative_document_content})
-                creative_content_cache[sender_id] = SECOND_STATE_ID
+                creative_content_cache[sender_id] = FIRST_STATE_ID
+                creative_content_parameters_cache[sender_id]["follow_up_prompt"] = response_text
 
                 if BOT_ID != sender_id:
                     client.chat_postMessage(
-                        channel=channel_id, text=creative_document_content)
+                        channel=channel_id, text=response_text)
                     return
+
+            else:
+                if creative_content_cache[sender_id] == FIRST_STATE_ID:
+                    creative_content_parameters_cache[sender_id]["follow_up_response"] = message_text
+                    try:
+                        creative_document_content = get_creative_content_gpt_response(
+                            sender_id, creative_content_parameters_cache[sender_id])
+                    except Exception as error_:
+                        logger.info(
+                            f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
+                        response_text = "Oops, We're experiencing some connection issues right now. \n\t\nCould you please try again?"
+                        if BOT_ID != sender_id:
+                            client.chat_postMessage(
+                                channel=channel_id, text=response_text)
+                            return
+
+                    content_translator(language, creative_document_content)
+                    creative_content_parameters_cache[sender_id].update(
+                        {"content": creative_document_content})
+                    creative_content_cache[sender_id] = SECOND_STATE_ID
+
+                    if BOT_ID != sender_id:
+                        client.chat_postMessage(
+                            channel=channel_id, text=creative_document_content)
+                        return
 
 
 def get_intent_response(sender_id, message_text):
@@ -308,8 +335,7 @@ def get_intent_response(sender_id, message_text):
         response_text = english_intent_response[intent]
 
     else:
-        response_text = "Oops, We're experiencing some connection \
-            issues right now. \n\t\nCould you please try again?"
+        response_text = "Oops, We're experiencing some connection issues right now. \n\t\nCould you please try again?"
 
     return (intent, response_text)
 
@@ -321,8 +347,8 @@ def is_fuzzy_matched_to_export_gmail(message_text):
         similarity = fuzz.ratio(word, message_text.lower())
         if similarity >= 80:
             return True
-        else:
-            return False
+
+    return False
 
 
 def is_fuzzy_matched_to_export_gdoc(message_text):
@@ -332,8 +358,8 @@ def is_fuzzy_matched_to_export_gdoc(message_text):
         similarity = fuzz.ratio(word, message_text.lower())
         if similarity >= 80:
             return True
-        else:
-            return False
+
+    return False
 
 
 def is_fuzzy_matched_to_exit(message_text):
@@ -367,12 +393,10 @@ def get_email_drafting_missing_feature(sender_id):
 def get_email_drafting_missing_feature_response(sender_id):
     email_parameters_json = email_parameters_cache[sender_id]
     if email_parameters_json["recipient_email"] == "":
-        response_text = "Hey, it looks like the recipient's email is missing. \
-            Can you provide that information?"
+        response_text = "Hey, it looks like the recipient's email is missing. Can you provide that information?"
 
     elif email_parameters_json["recipient_name"] == "":
-        response_text = "Hey, it looks like the recipient's name is missing. \
-            Can you provide that information?"
+        response_text = "Hey, it looks like the recipient's name is missing. Can you provide that information?"
 
     return response_text
 
@@ -472,4 +496,4 @@ def get_email_body_gpt_response(sender_id, parameter_json):
 
 # take our flask app and run on port 5000
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=8000)

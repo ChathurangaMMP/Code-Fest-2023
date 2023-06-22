@@ -47,6 +47,12 @@ openai_gpt_api_key = config["OpenAI"]["gpt_api_key"]
 with open(config["Rasa"]["english_intent_response"], "r") as file:
     english_intent_response = json.load(file)
 
+with open(config["Rasa"]["sinhala_intent_response"], "r") as file:
+    sinhala_intent_response = json.load(file)
+
+with open(config["Rasa"]["tamil_intent_response"], "r") as file:
+    tamil_intent_response = json.load(file)
+
 with open(config["OpenAI"]["email_parameters_prompt_file"], "r") as file:
     email_parameters_prompt = file.read()
 
@@ -74,6 +80,8 @@ FOURTH_STATE_ID = 4
 FIFTH_STATE_ID = 5
 
 english_http_nlu_endpoint = config["Rasa"]["english_http_nlu_endpoint"]
+sinhala_http_nlu_endpoint = config["Rasa"]["sinhala_http_nlu_endpoint"]
+tamil_http_nlu_endpoint = config["Rasa"]["tamil_http_nlu_endpoint"]
 
 caches_list = [language_cache, email_drafting_cache, email_parameters_cache,
                document_drafting_cache, document_drafting_parameters_cache,
@@ -89,19 +97,20 @@ async def process_chat_request(request: Request):
     message = request.message
     language = request.language  # default language is English.
     button = request.button
-
+    print(message)
     if language != "":
         language_cache[sender_id] = language
     else:
         language_cache[sender_id] = "English"
 
-    message_text = message_translator(message, language)
+    message_text, http_nlu_endpoint, intent_response = message_translator(
+        message, language)
+    print(message_text)
     logger.info(f'{sender_id}|{language}|{message_text}')
 
     if is_fuzzy_matched_to_exit(message_text):
         clear_caches_in_exit(sender_id)
-        response_text = "All the actions you started have been \
-            successfully closed. \n\nIs there anything else I can assist you with?"
+        response_text = "All the actions you started have been successfully closed. \n\nIs there anything else I can assist you with?"
         return {"sender": sender_id, "response": response_text}
 
     if button == "Email Drafting":
@@ -109,7 +118,7 @@ async def process_chat_request(request: Request):
             email_parameters_cache[sender_id] = {
                 "initial_prompt": message_text}
             intent, response_text = get_intent_response(
-                sender_id, message_text)
+                sender_id, message, http_nlu_endpoint, intent_response)
             email_drafting_cache[sender_id] = FIRST_STATE_ID
             email_parameters_cache[sender_id]["follow_up_prompt"] = response_text
 
@@ -124,8 +133,7 @@ async def process_chat_request(request: Request):
                 except Exception as error_:
                     logger.info(
                         f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
-                    response_text = "Oops, We're experiencing some connection \
-                        issues right now. \n\nCould you please try again?"
+                    response_text = "Oops, We're experiencing some connection issues right now. \n\nCould you please try again?"
                     return {"sender_id": sender_id, "response": response_text}
 
                 email_parameters_cache[sender_id].update(email_parameters)
@@ -156,8 +164,7 @@ async def process_chat_request(request: Request):
                 except Exception as error_:
                     logger.info(
                         f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
-                    response_text = "Oops, We're experiencing some connection \
-                        issues right now. \n\t\nCould you please try again?"
+                    response_text = "Oops, We're experiencing some connection issues right now. \n\t\nCould you please try again?"
                     return {"sender_id": sender_id, "response": response_text}
 
                 email_parameters_cache[sender_id]["email_body"] = generated_email_content
@@ -171,7 +178,7 @@ async def process_chat_request(request: Request):
             document_drafting_parameters_cache[sender_id] = {
                 "initial_prompt": message_text}
             intent, response_text = get_intent_response(
-                sender_id, message_text)
+                sender_id, message, http_nlu_endpoint, intent_response)
             document_drafting_cache[sender_id] = FIRST_STATE_ID
             document_drafting_parameters_cache[sender_id]["follow_up_prompt"] = response_text
 
@@ -188,11 +195,11 @@ async def process_chat_request(request: Request):
                 except Exception as error_:
                     logger.info(
                         f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
-                    response_text = "Oops, We're experiencing some connection \
-                        issues right now. \n\t\nCould you please try again?"
+                    response_text = "Oops, We're experiencing some connection issues right now. \n\nCould you please try again?"
                     return {"sender_id": sender_id, "response": response_text}
 
-                content_translator(language, document_content)
+                document_content = document_content_translator(
+                    language, document_content)
                 document_drafting_parameters_cache[sender_id].update(
                     {"content": document_content})
                 document_drafting_cache[sender_id] = SECOND_STATE_ID
@@ -204,7 +211,7 @@ async def process_chat_request(request: Request):
             creative_content_parameters_cache[sender_id] = {
                 "initial_prompt": message_text}
             intent, response_text = get_intent_response(
-                sender_id, message_text)
+                sender_id, message, http_nlu_endpoint, intent_response)
             creative_content_cache[sender_id] = FIRST_STATE_ID
             creative_content_parameters_cache[sender_id]["follow_up_prompt"] = response_text
 
@@ -213,17 +220,19 @@ async def process_chat_request(request: Request):
         else:
             if creative_content_cache[sender_id] == FIRST_STATE_ID:
                 creative_content_parameters_cache[sender_id]["follow_up_response"] = message_text
+                gpt_prompt_params = creative_content_parameters_cache[sender_id]
+                del gpt_prompt_params["follow_up_prompt"]
                 try:
                     creative_document_content = get_creative_content_gpt_response(
-                        sender_id, creative_content_parameters_cache[sender_id])
+                        sender_id, gpt_prompt_params)
                 except Exception as error_:
                     logger.info(
                         f'{sender_id}|OPENAI_EXTRACTION_ERROR|{error_}')
-                    response_text = "Oops, We're experiencing some connection \
-                        issues right now. \n\t\nCould you please try again?"
+                    response_text = "Oops, We're experiencing some connection issues right now. \n\t\nCould you please try again?"
                     return {"sender_id": sender_id, "response": response_text}
 
-                content_translator(language, creative_document_content)
+                creative_document_content = document_content_translator(
+                    language, creative_document_content)
                 creative_content_parameters_cache[sender_id].update(
                     {"content": creative_document_content})
                 creative_content_cache[sender_id] = SECOND_STATE_ID
@@ -231,10 +240,10 @@ async def process_chat_request(request: Request):
                 return {"sender_id": sender_id, "response": creative_document_content}
 
 
-def get_intent_response(sender_id, message_text):
+def get_intent_response(sender_id, message_text, http_nlu_endpoint, intent_response):
     data = json.dumps({"text": message_text})
     response = requests.request(
-        "POST", english_http_nlu_endpoint, headers=headers,
+        "POST", http_nlu_endpoint, headers=headers,
         data=data)
 
     intent = "nlu_fallback"
@@ -249,11 +258,10 @@ def get_intent_response(sender_id, message_text):
         else:
             intent = "nlu_fallback"
 
-        response_text = english_intent_response[intent]
+        response_text = intent_response[intent]
 
     else:
-        response_text = "Oops, We're experiencing some connection \
-            issues right now. \n\t\nCould you please try again?"
+        response_text = "Oops, We're experiencing some connection issues right now. \n\t\nCould you please try again?"
 
     return (intent, response_text)
 
@@ -290,11 +298,13 @@ async def process_send_email_request(request: Request):
     button = request.button
 
     driver = set_up_chrome_driver()
-    export_gdoc(driver, message)
+    try:
+        export_gdoc(driver, message)
+        return {"sender_id": sender_id, "response": "Content is successfully exported to Google Documents."}
 
-    clear_document_drafting_caches(sender_id, button)
-    logger.info(f'{sender_id}|DOCUMENT_DRAFTING_CACHE_CLEANED')
-    return {"sender_id": sender_id, "response": "Content is successfully exported to Google Documents."}
+    except:
+        clear_document_drafting_caches(sender_id, button)
+        logger.info(f'{sender_id}|DOCUMENT_DRAFTING_CACHE_CLEANED')
 
 
 def is_fuzzy_matched_to_exit(message_text):
@@ -338,12 +348,10 @@ def get_email_drafting_missing_feature(sender_id):
 def get_email_drafting_missing_feature_response(sender_id):
     email_parameters_json = email_parameters_cache[sender_id]
     if email_parameters_json["recipient_email"] == "":
-        response_text = "Hey, it looks like the recipient's email is missing. \
-            Can you provide that information?"
+        response_text = "Hey, it looks like the recipient's email is missing. Can you provide that information?"
 
     elif email_parameters_json["recipient_name"] == "":
-        response_text = "Hey, it looks like the recipient's name is missing. \
-            Can you provide that information?"
+        response_text = "Hey, it looks like the recipient's name is missing. Can you provide that information?"
 
     return response_text
 
@@ -369,14 +377,32 @@ def content_translator(language, email_content):
             email_content["email_body"])
 
 
+def document_content_translator(language, content):
+    if language == "Sinhala":
+        content = english_to_sinhala_translator(
+            content)
+
+    elif language == "Tamil":
+        content = english_to_tamil_translator(
+            content)
+
+    return content
+
+
 def message_translator(message, language):
     if language == "English":
         message_text = message
+        http_nlu_endpoint = english_http_nlu_endpoint
+        intent_response = english_intent_response
     elif language == "Sinhala":
         message_text = sinhala_to_english_translator(message)
+        http_nlu_endpoint = sinhala_http_nlu_endpoint
+        intent_response = sinhala_intent_response
     elif language == "Tamil":
         message_text = tamil_to_english_translator(message)
-    return message_text
+        http_nlu_endpoint = tamil_http_nlu_endpoint
+        intent_response = tamil_intent_response
+    return message_text, http_nlu_endpoint, intent_response
 
 
 def send_gpt_request(sender_id, prompt_text):
